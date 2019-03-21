@@ -378,7 +378,6 @@ export default {
     onSubmitAddProject (evt) {
       evt.preventDefault()
       const payload = {
-
         project_name: this.topProjectForm.project_name,
         project_desc: this.topProjectForm.project_desc
       }

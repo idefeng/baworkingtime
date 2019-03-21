@@ -72,7 +72,7 @@
             aria-controls="projectsTable"
             ></b-pagination>
         </div>
-        <div class="col-md-4">二级项目总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
+        <div class="col-md-4">打卡记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
       </div>
       <b-modal id="addUserCheckInfo-Modal" title="添加打卡信息" class="text-left" hide-footer>
       <b-form @submit="onSubmit" @reset="onReset">
@@ -86,19 +86,19 @@
           <!--<b-col>-->
         <b-form-group description="打卡时间格式YYYY-MM-DD hh:mm:ss 例如2019-03-21 10:00:00">
             <b-input-group prepend="上班打卡时间:" >
-              <b-input></b-input>
+              <b-input v-model="checkInfoForm.checkin"></b-input>
             </b-input-group>
         </b-form-group>
           <!--</b-col>-->
           <!--<b-col>-->
         <b-form-group description="打卡时间格式YYYY-MM-DD hh:mm:ss 例如2019-03-21 19:00:00">
             <b-input-group prepend="下班打卡时间:">
-              <b-input></b-input>
+              <b-input v-model="checkInfoForm.checkout"></b-input>
             </b-input-group>
         </b-form-group>
           <!--</b-col>-->
         <b-form-group label="有特殊打卡说明吗?">
-          <b-form-textarea placeholder="打卡说明" rows="3" id="check_desc"></b-form-textarea>
+          <b-form-textarea placeholder="打卡说明" rows="3" id="check_desc" v-model="checkInfoForm.check_detail"></b-form-textarea>
         </b-form-group>
         <b-button type="submit" variant="primary">添加记录</b-button>
         <b-button type="reset" variant="danger">重置</b-button>
@@ -144,10 +144,25 @@ export default {
           label: '操作'
         }
       },
-      items: []
+      items: [],
+      checkInfoForm: {
+        'userid': '',
+        'checkin': '',
+        'checkout': '',
+        'check_detail': ''
+      }
     }
   },
   methods: {
+    initData () {
+      this.selected = null
+      this.checkInfoForm.userid = ''
+      this.checkInfoForm.checkin = ''
+      this.checkInfoForm.checkout = ''
+      this.checkInfoForm.check_detail = ''
+      this.items = []
+      this.options = []
+    },
     getUsersCheck () {
       const path = 'http://localhost:5000/api/userscheck'
       axios.get(path)
@@ -161,10 +176,6 @@ export default {
               'checkout': res.data.results[i].checkout,
               'check_detail': res.data.results[i].check_detail
             })
-            this.options.push({
-              'value': res.data.results[i].userid,
-              'text': res.data.results[i].username
-            })
             // console.log(this.items)
             this.totalRows = this.items.length
           }
@@ -173,8 +184,46 @@ export default {
           console.error(error)
         })
     },
+    getUsers () {
+      const path = 'http://localhost:5000/api/users'
+      axios.get(path)
+        .then((res) => {
+          // this.users = JSON.parse(res.data.users)
+          // console.log(res.data.users)
+          // this.options = res.data.users
+          for (let i = 0; i < res.data.users.length; i++) {
+            this.options.push({
+              'value': res.data.users[i].id,
+              'text': res.data.users[i].username
+            })
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
+    addCheckInfo (payload) {
+      const path = 'http://localhost:5000/api/userscheck'
+      axios.post(path, payload)
+        .then(() => {
+          this.getUsersCheck()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getUsersCheck()
+        })
+    },
     onSubmit (evt) {
       evt.preventDefault()
+      const payload = {
+        'userid': this.selected,
+        'checkin': this.checkInfoForm.checkin,
+        'checkout': this.checkInfoForm.checkout,
+        'check_detail': this.checkInfoForm.check_detail
+      }
+      console.log(payload)
+      this.addCheckInfo(payload)
+      this.initData()
     },
     onReset (evt) {
       evt.preventDefault()
@@ -182,6 +231,7 @@ export default {
   },
   created () {
     this.getUsersCheck()
+    this.getUsers()
   }
 }
 </script>

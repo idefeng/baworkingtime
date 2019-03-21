@@ -159,8 +159,18 @@ def single_projects(type_id, project_id):
     return jsonify({'status': 'success'})
 
 
-@app.route('/api/userscheck', methods=['GET'])
+@app.route('/api/userscheck', methods=['GET', 'POST'])
 def users_check():
+    if request.method == 'POST':
+        response_data = request.get_json()
+        userCheck = UsersCheck(response_data.get('userid'),
+                               response_data.get('checkin'),
+                               response_data.get('checkout'),
+                               response_data.get('check_detail'))
+        db.session.add(userCheck)
+        db.session.commit()
+        db.session.remove()
+
     users_check = UsersCheck.query.all()
     result = []
     for userCheck in users_check:
