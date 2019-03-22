@@ -4,6 +4,7 @@ from models.attendance import db, Users, Users_Workdiary, UsersCheck, Projects_L
 from flask_cors import CORS
 from helpers.common import AlchemyEncoder
 import json
+import datetime
 
 app = Flask(__name__,
             static_folder="./dist/static",
@@ -186,6 +187,22 @@ def users_check():
 
     return jsonify({'results': result})
 
+
+@app.route('/api/userscheck', methods=['PUT', 'DELETE'])
+def single_check():
+    if request.method == 'PUT':
+        put_data = request.get_json()
+        users_check = UsersCheck.query.filter(UsersCheck.id == put_data.get('id')).first()
+        users_check.userid = users_check.relate_Users.id
+        users_check.checkin = put_data.get('check_date')+' '+put_data.get('checkin')
+        users_check.checkin = put_data.get('check_date') + ' ' + put_data.get('checkin')
+        users_check.checkout = put_data.get('check_date') + ' ' + put_data.get('checkout')
+        users_check.check_detail = put_data.get('check_detail')
+
+        db.session.add(users_check)
+        db.session.commit()
+
+    return jsonify({'status': 'success'})
 # @app.route('/', defaults={'path': 'POST'})
 # @app.route('/<path:path>')
 # def catch_all(path):

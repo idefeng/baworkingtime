@@ -21,6 +21,7 @@
         striped
         hover
         :filter="filter"
+        @filtered="filterChanged"
         :fields="fields"
         :items="items"
         :per-page="perPage"
@@ -307,6 +308,9 @@ export default {
     }
   },
   methods: {
+    filterChanged (filteredItems) {
+      this.totalRows = filteredItems.length
+    },
     getProjects () {
       const path = 'http://localhost:5000/api/projects/3'
       this.items = []

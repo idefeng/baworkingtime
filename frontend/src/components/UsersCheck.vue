@@ -21,6 +21,7 @@
         striped
         hover
         :filter="filter"
+        @filtered="filterChanged"
         :fields="fields"
         :items="items"
         :per-page="perPage"
@@ -30,7 +31,7 @@
           {{ data.index + 1 }}
         </template>
         <template slot="actions" slot-scope="row">
-          <b-button class="btn-warning" v-b-modal.editProjectInfo @click="editProject(row.item)">编辑</b-button>
+          <b-button class="btn-warning" v-b-modal.editUserCheckInfo-Modal @click="editUserCheckInfo(row.item)">编辑</b-button>
           <!--<b-button class="btn-danger" @click="row.toggleDetails">-->
             <!--{{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>-->
         </template>
@@ -61,8 +62,8 @@
       </b-row>
       <div class="row" style="text-align: center;">
         <div class="col-md-4" style="text-align: left;">
-          <b-button type="button" variant="success" v-b-modal.addUserCheckInfo-Modal @click="''">单条添加</b-button>
-          <b-button type="button" variant="primary" v-b-modal.topProjectInfo-modal @click="getTopProjects(2)">管理一级项目</b-button>
+          <b-button variant="success" v-b-modal.addUserCheckInfo-Modal >单条添加</b-button>
+          <b-button variant="primary" v-b-modal.topProjectInfo-modal @click="''">批量导入</b-button>
         </div>
         <div class="col-md-4">
           <b-pagination
@@ -74,7 +75,8 @@
         </div>
         <div class="col-md-4">打卡记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
       </div>
-      <b-modal id="addUserCheckInfo-Modal" title="添加打卡信息" class="text-left" hide-footer>
+      <!-- 添加打卡记录信息 -->
+      <b-modal id="addUserCheckInfo-Modal" ref="addUserCheckInfoRef" title="添加打卡信息" class="text-left" hide-footer>
       <b-form @submit="onSubmit" @reset="onReset">
         <b-form-group label="姓名：" label-for="username-select">
           <!--<b-col>-->
@@ -103,6 +105,34 @@
         <b-button type="submit" variant="primary">添加记录</b-button>
         <b-button type="reset" variant="danger">重置</b-button>
       </b-form>
+      </b-modal>
+      <!-- 编辑打卡记录 -->
+      <b-modal id="editUserCheckInfo-Modal" ref="editUserCheckInfoRef" title="编辑打卡信息" class="text-left" hide-footer>
+        <b-form @submit="onSubmitEdit" @reset="onResetEdit">
+          <label>用户名: {{ editCheckInfoForm.username}}</label>
+          <b-form-group >
+            <b-input-group prepend="上班具体日期">
+              <b-input v-model="editCheckInfoForm.check_date"></b-input>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group >
+            <b-input-group prepend="上班打卡时间">
+              <b-input v-model="editCheckInfoForm.checkin"></b-input>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group>
+            <b-input-group prepend="下班打卡时间">
+              <b-input v-model="editCheckInfoForm.checkout"></b-input>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group>
+            <b-input-group prepend="打卡理由说明">
+              <b-input v-model="editCheckInfoForm.check_detail"></b-input>
+            </b-input-group>
+          </b-form-group>
+          <b-button variant="success" type="submit">确认</b-button>
+          <b-button variant="danger" type="reset">重置</b-button>
+        </b-form>
       </b-modal>
     </b-container>
 </template>
@@ -150,6 +180,14 @@ export default {
         'checkin': '',
         'checkout': '',
         'check_detail': ''
+      },
+      editCheckInfoForm: {
+        'id': '',
+        'username': '',
+        'check_date': '',
+        'checkin': '',
+        'checkout': '',
+        'check_detail': ''
       }
     }
   },
@@ -160,11 +198,21 @@ export default {
       this.checkInfoForm.checkin = ''
       this.checkInfoForm.checkout = ''
       this.checkInfoForm.check_detail = ''
-      this.items = []
-      this.options = []
+      this.editCheckInfoForm.id = ''
+      this.editCheckInfoForm.username = ''
+      this.editCheckInfoForm.check_date = ''
+      this.editCheckInfoForm.checkin = ''
+      this.editCheckInfoForm.checkout = ''
+      this.editCheckInfoForm.check_detail = ''
+      // this.items = []
+      // this.options = []
+    },
+    filterChanged (filteredItems) {
+      this.totalRows = filteredItems.length
     },
     getUsersCheck () {
       const path = 'http://localhost:5000/api/userscheck'
+      this.items = []
       axios.get(path)
         .then((res) => {
           for (let i = 0; i < res.data.results.length; i++) {
@@ -223,10 +271,45 @@ export default {
       }
       console.log(payload)
       this.addCheckInfo(payload)
+      this.$refs.addUserCheckInfoRef.hide()
       this.initData()
     },
     onReset (evt) {
       evt.preventDefault()
+      this.$refs.addUserCheckInfoRef.hide()
+      this.initData()
+    },
+    editUserCheckInfo (item) {
+      this.editCheckInfoForm = item
+      // console.log(this.editCheckInfoForm)
+    },
+    updateUserCheckInfo (payload) {
+      const path = 'http://localhost:5000/api/userscheck'
+      axios.put(path, payload)
+        .then(() => {
+          this.getUsersCheck()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getUsersCheck()
+        })
+    },
+    onSubmitEdit (evt) {
+      evt.preventDefault()
+      this.$refs.editUserCheckInfoRef.hide()
+      const payload = {
+        'id': this.editCheckInfoForm.id,
+        'check_date': this.editCheckInfoForm.check_date,
+        'checkin': this.editCheckInfoForm.checkin,
+        'checkout': this.editCheckInfoForm.checkout,
+        'check_detail': this.editCheckInfoForm.check_detail
+      }
+      this.updateUserCheckInfo(payload)
+    },
+    onResetEdit (evt) {
+      evt.preventDefault()
+      this.$refs.editUserCheckInfoRef.hide()
+      this.initData()
     }
   },
   created () {
