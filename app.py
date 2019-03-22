@@ -218,6 +218,7 @@ def all_diary():
             'id': diary.id,
             'user_id': diary.username,
             'username': diary.relate_users_diary.username,
+            'work_date': diary.work_date,
             'work_hours': diary.work_hours,
             'project_id': diary.project_name,
             'project_name': diary.relate_projects_diary.project_name,

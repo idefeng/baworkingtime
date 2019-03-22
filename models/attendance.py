@@ -103,6 +103,7 @@ class Users_Workdiary(db.Model):
     __tablename__ = 'Users_Workdiary'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    work_date = db.Column(db.Date, nullable=True)
     work_hours = db.Column(db.Integer, nullable=False)
     project_name = db.Column(db.Integer, db.ForeignKey('Projects_Level_Two.id'), nullable=False)
     work_diary = db.Column(db.String(2000))
