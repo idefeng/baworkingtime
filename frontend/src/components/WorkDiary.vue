@@ -326,7 +326,7 @@ export default {
         'project_id': this.editDiaryInfoForm.project_id,
         'work_content': this.editDiaryInfoForm.work_content
       }
-      console.log(payload)
+      // console.log(payload)
       this.updateDiary(this.editDiaryInfoForm.id, payload)
       this.initDate()
     },
