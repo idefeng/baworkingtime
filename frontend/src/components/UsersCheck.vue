@@ -32,32 +32,32 @@
         </template>
         <template slot="actions" slot-scope="row">
           <b-button class="btn-warning" v-b-modal.editUserCheckInfo-Modal @click="editUserCheckInfo(row.item)">编辑</b-button>
-          <!--<b-button class="btn-danger" @click="row.toggleDetails">-->
-            <!--{{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>-->
+          <b-button class="btn-danger" @click="row.toggleDetails">
+            {{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>
         </template>
-        <!--<template slot="row-details" slot-scope="row">-->
-          <!--<b-card>-->
-            <!--<b-row class="mb-6">-->
-              <!--<b-col class="text-sm-right"><b>一级项目ID：</b></b-col>-->
-              <!--<b-col>{{ row.item.id}}</b-col>-->
-              <!--<b-col class="text-sm-right"><b>一级项目名称：</b></b-col>-->
-              <!--<b-col class="text-sm-left">{{ row.item.TOP_Project_name}}</b-col>-->
-              <!--<b-col class="text-sm-right"><b>一级项目描述：</b></b-col>-->
-              <!--<b-col class="text-sm-left">{{ row.item.TOP_Project_desc}}</b-col>-->
-            <!--</b-row>-->
-            <!--<hr>-->
-            <!--<b-row class="mb-6">-->
-              <!--<b-col class="text-sm-right"><b>二级项目ID：</b></b-col>-->
-              <!--<b-col>{{ row.item.Second_Project_id}}</b-col>-->
-              <!--<b-col class="text-sm-right"><b>二级项目名称：</b></b-col>-->
-              <!--<b-col class="text-sm-left">{{ row.item.Second_Project_name}}</b-col>-->
-              <!--<b-col class="text-sm-right"><b>二级项目描述：</b></b-col>-->
-              <!--<b-col class="text-sm-left">{{ row.item.Second_Project_description}}</b-col>-->
-            <!--</b-row>-->
-            <!--<hr>-->
-            <!--<b-button class="btn-danger" @click="deleteProject(2, row.item)">确定删除上述信息?</b-button>-->
-          <!--</b-card>-->
-        <!--</template>-->
+        <template slot="row-details" slot-scope="row">
+          <b-card>
+            <b-row class="mb-6">
+              <b-col class="text-sm-right"><b>一级项目ID：</b></b-col>
+              <b-col>{{ row.item.id}}</b-col>
+              <b-col class="text-sm-right"><b>用户名：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.username}}</b-col>
+              <b-col class="text-sm-right"><b>上班日期：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.check_date}}</b-col>
+            </b-row>
+            <hr>
+            <b-row class="mb-6">
+              <b-col class="text-sm-right"><b>上班打卡：</b></b-col>
+              <b-col>{{ row.item.checkin}}</b-col>
+              <b-col class="text-sm-right"><b>下班打卡：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.checkout}}</b-col>
+              <b-col class="text-sm-right"><b>打卡说明：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.check_detail}}</b-col>
+            </b-row>
+            <hr>
+            <b-button class="btn-danger" @click="deleteCheckInfo(row.item)">确定删除打卡信息?</b-button>
+          </b-card>
+        </template>
       </b-table>
       </b-row>
       <div class="row" style="text-align: center;">
@@ -283,8 +283,8 @@ export default {
       this.editCheckInfoForm = item
       // console.log(this.editCheckInfoForm)
     },
-    updateUserCheckInfo (payload) {
-      const path = 'http://localhost:5000/api/userscheck'
+    updateUserCheckInfo (checkId, payload) {
+      const path = `http://localhost:5000/api/userscheck/${checkId}`
       axios.put(path, payload)
         .then(() => {
           this.getUsersCheck()
@@ -304,12 +304,26 @@ export default {
         'checkout': this.editCheckInfoForm.checkout,
         'check_detail': this.editCheckInfoForm.check_detail
       }
-      this.updateUserCheckInfo(payload)
+      this.updateUserCheckInfo(this.editCheckInfoForm.id, payload)
     },
     onResetEdit (evt) {
       evt.preventDefault()
       this.$refs.editUserCheckInfoRef.hide()
       this.initData()
+    },
+    removeCheckInfo (checkId) {
+      const path = `http://localhost:5000/api/userscheck/${checkId}`
+      axios.delete(path)
+        .then(() => {
+          this.getUsersCheck()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getUsersCheck()
+        })
+    },
+    deleteCheckInfo (item) {
+      this.removeCheckInfo(item.id)
     }
   },
   created () {

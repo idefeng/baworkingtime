@@ -188,11 +188,11 @@ def users_check():
     return jsonify({'results': result})
 
 
-@app.route('/api/userscheck', methods=['PUT', 'DELETE'])
-def single_check():
+@app.route('/api/userscheck/<check_id>', methods=['PUT', 'DELETE'])
+def single_check(check_id):
     if request.method == 'PUT':
         put_data = request.get_json()
-        users_check = UsersCheck.query.filter(UsersCheck.id == put_data.get('id')).first()
+        users_check = UsersCheck.query.filter(UsersCheck.id == check_id).first()
         users_check.userid = users_check.relate_Users.id
         users_check.checkin = put_data.get('check_date')+' '+put_data.get('checkin')
         users_check.checkin = put_data.get('check_date') + ' ' + put_data.get('checkin')
@@ -200,6 +200,10 @@ def single_check():
         users_check.check_detail = put_data.get('check_detail')
 
         db.session.add(users_check)
+        db.session.commit()
+    if request.method == 'DELETE':
+        user_check = UsersCheck.query.filter(UsersCheck.id == check_id).first()
+        db.session.delete(user_check)
         db.session.commit()
 
     return jsonify({'status': 'success'})
