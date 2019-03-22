@@ -6,6 +6,7 @@ import NotFound from '@/components/NotFound'
 import Users from '@/components/Users'
 import Projects from '@/components/Projects'
 import UsersCheck from '@/components/UsersCheck'
+import WorkDiary from '@/components/WorkDiary'
 
 Vue.use(Router)
 
@@ -31,6 +32,11 @@ export default new Router({
       path: '/UsersCheck',
       name: 'UsersCheck',
       component: UsersCheck
+    },
+    {
+      path: '/WorkDiary',
+      name: 'WorkDiary',
+      component: WorkDiary
     },
     {
       path: '/About',
