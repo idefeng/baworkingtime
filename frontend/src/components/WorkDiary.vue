@@ -49,13 +49,13 @@
             <b-row class="mb-6">
               <b-col class="text-sm-right"><b>工作时长：</b></b-col>
               <b-col>{{ row.item.work_hours}}</b-col>
-              <b-col class="text-sm-right"><b>下班打卡：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.checkout}}</b-col>
-              <b-col class="text-sm-right"><b>打卡说明：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.check_detail}}</b-col>
+              <b-col class="text-sm-right"><b>工作项目：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.project_name}}</b-col>
+              <b-col class="text-sm-right"><b>工作内容：</b></b-col>
+              <b-col class="text-sm-left">{{ row.item.work_content}}</b-col>
             </b-row>
             <hr>
-            <b-button class="btn-danger" @click="deleteCheckInfo(row.item)">确定删除打卡信息?</b-button>
+            <b-button class="btn-danger" @click="deleteDiaryInfo(row.item)">确定删除该条日志信息?</b-button>
           </b-card>
         </template>
       </b-table>
@@ -181,6 +181,7 @@ export default {
       workDiaryForm: {
         'user_id': '',
         'user_name': '',
+        'work_date': '',
         'work_hours': 0,
         'project_id': '',
         'project_name': '',
@@ -191,7 +192,13 @@ export default {
   },
   methods: {
     initDate () {
-
+      this.workDiaryForm.user_id = ''
+      this.workDiaryForm.user_name = ''
+      this.workDiaryForm.work_date = ''
+      this.workDiaryForm.project_name = ''
+      this.workDiaryForm.project_id = ''
+      this.workDiaryForm.work_hours = ''
+      this.workDiaryForm.work_content = ''
     },
     filterChanged (filteredItems) {
       this.totalRows = filteredItems.length
@@ -215,7 +222,7 @@ export default {
           // this.options = res.data.users
           for (let i = 0; i < res.data.users.length; i++) {
             this.username_options.push({
-              'value': res.data.users[i].user_id,
+              'value': res.data.users[i].id,
               'text': res.data.users[i].username
             })
           }
@@ -231,7 +238,7 @@ export default {
           // console.log(res.data.projects)
           for (let i = 0; i < res.data.projects.length; i++) {
             this.project_options.push({
-              'value': res.data.projects[i].project_id,
+              'value': res.data.projects[i].id,
               'text': res.data.projects[i].project_name
             })
           }
@@ -240,15 +247,41 @@ export default {
           console.error(error)
         })
     },
+    addDiary (payload) {
+      const path = 'http://localhost:5000/api/workdiary'
+      axios.post(path, payload)
+        .then(() => {
+          this.getWorkDiary()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getWorkDiary()
+        })
+    },
     getBasicInfo () {
       this.getUsers()
       this.getProjects()
     },
-    onSubmit () {
-      console.log('onsubmit')
+    onSubmit (evt) {
+      // console.log('onsubmit')
+      evt.preventDefault()
+      const payload = {
+        'user_id': this.username_selected,
+        'work_date': this.workDiaryForm.work_date,
+        'work_hours': this.workDiaryForm.work_hours,
+        'project_id': this.project_selected,
+        'work_content': this.workDiaryForm.work_content
+      }
+      // console.log(payload)
+      this.addDiary(payload)
+      this.$refs.addDiaryInfoRef.hide()
+      this.initDate()
     },
-    onReset () {
-      console.log('onreset')
+    onReset (evt) {
+      // console.log('onreset')
+      evt.preventDefault()
+      this.$refs.addDiaryInfoRef.hide()
+      this.initDate()
     },
     onSubmitEdit (evt) {
       evt.preventDefault()

@@ -209,8 +209,18 @@ def single_check(check_id):
     return jsonify({'status': 'success'})
 
 
-@app.route('/api/workdiary', methods=['GET'])
+@app.route('/api/workdiary', methods=['GET', 'POST'])
 def all_diary():
+    if request.method == 'POST':
+        post_data = request.get_json()
+        work_dairy = Users_Workdiary(post_data.get('user_id'),
+                                     post_data.get('work_date'),
+                                     post_data.get('work_hours'),
+                                     post_data.get('project_id'),
+                                     post_data.get('work_content'))
+        db.session.add(work_dairy)
+        db.session.commit()
+
     all_diary = Users_Workdiary.query.all()
     result = []
     for diary in all_diary:

@@ -108,8 +108,9 @@ class Users_Workdiary(db.Model):
     project_name = db.Column(db.Integer, db.ForeignKey('Projects_Level_Two.id'), nullable=False)
     work_diary = db.Column(db.String(2000))
 
-    def __init__(self, username, work_hours, project_name, work_diary = ''):
+    def __init__(self, username, work_date, work_hours, project_name, work_diary = ''):
         self.username = username
+        self.work_date = work_date
         self.work_hours = work_hours
         self.project_name = project_name
         if work_diary == '':
