@@ -1,7 +1,7 @@
 <template>
     <div>
   <b-navbar toggleable="lg" type="dark" variant="success">
-    <b-navbar-brand href="/">NavBar</b-navbar-brand>
+    <b-navbar-brand href="/">首页</b-navbar-brand>
 
     <b-navbar-toggle target="nav_collapse" />
 
