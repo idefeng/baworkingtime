@@ -76,7 +76,7 @@
         <div class="col-md-4">部门工作日志记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
       </div>
       <!-- 添加日志记录信息 -->
-      <b-modal id="addDiayInfo-Modal" ref="addDiaryInfoRef" title="添加打卡信息" class="text-left" hide-footer>
+      <b-modal id="addDiayInfo-Modal" ref="addDiaryInfoRef" title="添加日志信息" class="text-left" hide-footer>
       <b-form @submit="onSubmit" @reset="onReset">
         <b-form-group label="员工姓名：" label-for="username-select">
             <b-form-select id="username-select" v-model="username_selected" :options="username_options" required >
@@ -108,27 +108,27 @@
       </b-form>
       </b-modal>
       <!-- 编辑日志记录 -->
-      <b-modal id="editDiaryInfo-Modal" ref="editUserCheckInfoRef" title="编辑打卡信息" class="text-left" hide-footer>
+      <b-modal id="editDiaryInfo-Modal" ref="editUserCheckInfoRef" title="编辑日志信息" class="text-left" hide-footer>
         <b-form @submit="onSubmitEdit" @reset="onResetEdit">
           <label>用户名: {{ editDiaryInfoForm.username}}</label>
           <b-form-group >
-            <b-input-group prepend="上班具体日期">
-              <b-input v-model="editDiaryInfoForm.check_date"></b-input>
+            <b-input-group prepend="工作日期">
+              <b-input v-model="editDiaryInfoForm.work_date"></b-input>
             </b-input-group>
           </b-form-group>
           <b-form-group >
-            <b-input-group prepend="上班打卡时间">
-              <b-input v-model="editDiaryInfoForm.checkin"></b-input>
+            <b-input-group prepend="工作时长">
+              <b-input v-model="editDiaryInfoForm.work_hours"></b-input>
             </b-input-group>
           </b-form-group>
+          <b-form-group label="工作项目：" label-for="username-select">
+            <b-form-select id="project1-select" v-model="project_selected" :options="project_options" required >
+              <option :value="editDiaryInfoForm.project_id" slot="first">{{ editDiaryInfoForm.project_name}}</option>
+            </b-form-select>
+        </b-form-group>
           <b-form-group>
-            <b-input-group prepend="下班打卡时间">
-              <b-input v-model="editDiaryInfoForm.checkout"></b-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group>
-            <b-input-group prepend="打卡理由说明">
-              <b-input v-model="editDiaryInfoForm.check_detail"></b-input>
+            <b-input-group prepend="工作内容">
+              <b-input v-model="editDiaryInfoForm.work_content"></b-input>
             </b-input-group>
           </b-form-group>
           <b-button variant="success" type="submit">确认</b-button>
@@ -199,6 +199,7 @@ export default {
       this.workDiaryForm.project_id = ''
       this.workDiaryForm.work_hours = ''
       this.workDiaryForm.work_content = ''
+      this.editDiaryInfoForm = {}
     },
     filterChanged (filteredItems) {
       this.totalRows = filteredItems.length
@@ -298,11 +299,41 @@ export default {
     deleteDiaryInfo (item) {
       this.removeDiaryInfo(item.id)
     },
+    // 编辑单条日志
+    editDiaryInfo (item) {
+      this.getProjects()
+      this.editDiaryInfoForm = item
+    },
+    updateDiary (diaryId, payload) {
+      const path = `http://localhost:5000/api/workdiary/${diaryId}`
+      axios.put(path, payload)
+        .then(() => {
+          this.getWorkDiary()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getWorkDiary()
+        })
+    },
     onSubmitEdit (evt) {
       evt.preventDefault()
+      this.$refs.editUserCheckInfoRef.hide()
+      const payload = {
+        'id': this.editDiaryInfoForm.id,
+        'user_id': this.editDiaryInfoForm.user_id,
+        'work_date': this.editDiaryInfoForm.work_date,
+        'work_hours': this.editDiaryInfoForm.work_hours,
+        'project_id': this.editDiaryInfoForm.project_id,
+        'work_content': this.editDiaryInfoForm.work_content
+      }
+      console.log(payload)
+      this.updateDiary(this.editDiaryInfoForm.id, payload)
+      this.initDate()
     },
     onResetEdit (evt) {
       evt.preventDefault()
+      this.$refs.editUserCheckInfoRef.hide()
+      this.initDate()
     }
   },
   created () {

@@ -241,7 +241,17 @@ def all_diary():
 @app.route('/api/workdiary/<diary_id>', methods=['PUT', 'DELETE'])
 def single_diary(diary_id):
     if request.method == 'PUT':
-        pass
+        put_data = request.get_json()
+        diary_info = Users_Workdiary.query.filter(Users_Workdiary.id == diary_id).first()
+        diary_info.username = put_data.get('user_id')
+        diary_info.work_date = put_data.get('work_date')
+        diary_info.work_hours = put_data.get('work_hours')
+        diary_info.project_name = put_data.get('project_id')
+        diary_info.work_diary = put_data.get('work_content')
+
+        db.session.add(diary_info)
+        db.session.commit()
+
     if request.method == 'DELETE':
         diary_info = Users_Workdiary.query.filter(Users_Workdiary.id == diary_id).first()
         db.session.delete(diary_info)
