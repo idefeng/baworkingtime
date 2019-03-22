@@ -207,6 +207,26 @@ def single_check(check_id):
         db.session.commit()
 
     return jsonify({'status': 'success'})
+
+
+@app.route('/api/workdiary', methods=['GET'])
+def all_diary():
+    all_diary = Users_Workdiary.query.all()
+    result = []
+    for diary in all_diary:
+        result.append({
+            'id': diary.id,
+            'user_id': diary.username,
+            'username': diary.relate_users_diary.username,
+            'work_hours': diary.work_hours,
+            'project_id': diary.project_name,
+            'project_name': diary.relate_projects_diary.project_name,
+            'work_content': diary.work_diary
+        })
+
+    return jsonify({'results': result})
+
+
 # @app.route('/', defaults={'path': 'POST'})
 # @app.route('/<path:path>')
 # def catch_all(path):
