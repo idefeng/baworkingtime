@@ -28,6 +28,7 @@ class Users(db.Model):
     username = db.Column(db.String(80), unique=False)
     email = db.Column(db.String(120), unique=True)
     relate_usersCheck = db.relationship('UsersCheck', backref='relate_Users')
+    relate_usersDiary = db.relationship('Users_Workdiary', backref='relate_users_diary')
 
     def __init__(self, user_cardnum, username, email):
         self.user_cardnum = user_cardnum
@@ -83,6 +84,7 @@ class Projects_Level_Two(db.Model):
     parent_project = db.Column(db.Integer, db.ForeignKey('Projects_Top_Level.id'), nullable=False)
     project_name = db.Column(db.String(100), nullable=False)
     project_desc = db.Column(db.String(500))
+    relate_projects_diary = db.relationship('Users_Workdiary', backref='relate_projects_diary')
     # relate_top_level = db.relationship('Projects_Top_Level', backref='relate_level_two', lazy='dynamic')
 
     def __init__(self, parent_project, project_name, project_desc=''):
