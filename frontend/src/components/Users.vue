@@ -4,9 +4,9 @@
         <div class="col-md-10">
           <h1>技术部员工管理</h1>
           <hr>
-          <button type="button" class="btn btn-success btn-sm" v-b-modal.user-modal>添加员工</button>
+          <button type="button" class="btn btn-success" v-b-modal.user-modal>添加员工</button>
           <br><br>
-          <table class="table table-hover">
+          <table class="table table-hover table-striped">
             <thead>
               <tr>
                 <!--<th scope="col">ID</th>-->
@@ -23,8 +23,8 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>
-                  <button type="button" class="btn btn-warning btn-sm" v-b-modal.user-update-modal @click="editUser(user)">更新</button>
-                  <button type="button" class="btn btn-danger btn-sm" @click="onDeleteUser(user)">删除</button>
+                  <button type="button" class="btn btn-warning" v-b-modal.user-update-modal @click="editUser(user)">更新</button>
+                  <button type="button" class="btn btn-danger" @click="onDeleteUser(user)">删除</button>
                 </td>
               </tr>
             </tbody>
