@@ -238,6 +238,16 @@ def all_diary():
     return jsonify({'results': result})
 
 
+@app.route('/api/workdiary/<diary_id>', methods=['PUT', 'DELETE'])
+def single_diary(diary_id):
+    if request.method == 'PUT':
+        pass
+    if request.method == 'DELETE':
+        diary_info = Users_Workdiary.query.filter(Users_Workdiary.id == diary_id).first()
+        db.session.delete(diary_info)
+        db.session.commit()
+
+    return jsonify({'result': 'success'})
 # @app.route('/', defaults={'path': 'POST'})
 # @app.route('/<path:path>')
 # def catch_all(path):

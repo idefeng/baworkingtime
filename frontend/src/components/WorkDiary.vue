@@ -107,7 +107,7 @@
         <b-button type="reset" variant="danger">重置</b-button>
       </b-form>
       </b-modal>
-      <!-- 编辑打卡记录 -->
+      <!-- 编辑日志记录 -->
       <b-modal id="editDiaryInfo-Modal" ref="editUserCheckInfoRef" title="编辑打卡信息" class="text-left" hide-footer>
         <b-form @submit="onSubmitEdit" @reset="onResetEdit">
           <label>用户名: {{ editDiaryInfoForm.username}}</label>
@@ -282,6 +282,21 @@ export default {
       evt.preventDefault()
       this.$refs.addDiaryInfoRef.hide()
       this.initDate()
+    },
+    // 删除单条日志
+    removeDiaryInfo (diaryId) {
+      const path = `http://localhost:5000/api/workdiary/${diaryId}`
+      axios.delete(path)
+        .then(() => {
+          this.getWorkDiary()
+        })
+        .catch((error) => {
+          console.error(error)
+          this.getWorkDiary()
+        })
+    },
+    deleteDiaryInfo (item) {
+      this.removeDiaryInfo(item.id)
     },
     onSubmitEdit (evt) {
       evt.preventDefault()
