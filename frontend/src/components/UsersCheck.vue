@@ -238,6 +238,7 @@ export default {
       this.editCheckInfoForm.checkin = ''
       this.editCheckInfoForm.checkout = ''
       this.editCheckInfoForm.check_detail = ''
+      this.checkInfoFile = null
       // this.items = []
       // this.options = []
     },
@@ -362,6 +363,7 @@ export default {
     // 批量导入日志
     onSubmitBatchImportCheckInfo (evt) {
       evt.preventDefault()
+      this.$refs.batchImportCheckInfoRef.hide()
       const formData = new FormData()
       formData.append('check_file', this.checkInfoFile)
       const options = {
@@ -384,6 +386,7 @@ export default {
     },
     onResetBatchImportCheckInfo (evt) {
       evt.preventDefault()
+      this.$refs.batchImportCheckInfoRef.hide()
     }
   },
   created () {

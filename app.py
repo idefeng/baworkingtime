@@ -4,6 +4,7 @@ from random import *
 from models.attendance import db, Users, Users_Workdiary, UsersCheck, Projects_Level_Two, Projects_Top_Level
 from flask_cors import CORS
 from helpers.common import AlchemyEncoder
+from openpyxl import load_workbook
 import json
 import time
 import os
@@ -237,6 +238,51 @@ def batch_check_info_upload():
         new_filename = str(unix_time) + '.' + ext
 
         f.save(os.path.join(file_dir, new_filename))
+        excel_file = load_workbook(file_dir + '/' + new_filename)
+        sheet = excel_file.get_sheet_by_name('北京')  # 打开名叫”“”“”“”“”“”“”“北京的sheet
+        # print(sheet["C4"].value)
+        # print(sheet.rows)
+        # print(sheet)
+        check_info = []
+        check_rows = tuple(sheet.rows)  # 按行生成tuple
+        check_cols = tuple(sheet.columns)   # 按列生成tuple
+        # print(check_rows)
+        # print(check_cols)
+        tmp_value = ''
+        for card_number in check_cols[2]:    # 员工卡号，先拿到员工卡号做为分键值
+            if card_number.value != tmp_value:  # 确保员工卡号做为键不重复
+                check_info.append({card_number.value: {}})  # 生成列表元素是以员工卡号为key的一个字典
+                tmp_value = card_number.value
+
+        # for work_day in check_cols[3]:
+        #     if work_day.value.strftime('%Y%m%d') != tmp_value:
+
+        for row in check_rows:
+            for i in range(len(check_info)):
+                if row[2].value in check_info[i]:  # 根据员工卡号去匹配
+                    # check_info[i][row[2].value]['name'] = row[1].value
+                    # check_info[i][row[2].value]['check'] = row[3].value
+                    work_day = row[3].value.strftime('%Y-%m-%d')   # 上班日期,年-月-日格式
+                    if work_day not in check_info[i][row[2].value]:     # 如果该员工卡号下面的字典里,没有该日期,则将该打卡时间加入列表
+                        check_info[i][row[2].value][work_day] = [row[3].value.strftime('%Y-%m-%d %H:%M:%S')]
+                    else:   # 如果有该日期,则append追加到列表
+                        check_info[i][row[2].value][work_day].append(row[3].value.strftime('%Y-%m-%d %H:%M:%S'))
+        # print(check_info)
+        # 下面的语句从用户表中列表userid,user_cardnum列
+        user_info = Users.query.with_entities(Users.id, Users.user_cardnum).distinct().all()
+        # print(user_info)
+        for userInfo in user_info:
+            for checkInfo in check_info:
+                if userInfo[1] in checkInfo:   # userInfo[1]为员工卡号,如果在checkInfo中存在
+                    for key in checkInfo[userInfo[1]]:
+                        checkInfo[userInfo[1]][key].sort()  # 将最后的日志按从早到晚进行排序
+                        # 插入数据库
+                        user_check_info = UsersCheck(userInfo[0],
+                                                     checkInfo[userInfo[1]][key][0],
+                                                     checkInfo[userInfo[1]][key][len(checkInfo[userInfo[1]][key])-1],
+                                                     '没有打卡说明')
+                        db.session.add(user_check_info)
+                        db.session.commit()
 
     return jsonify({'result': 'success'})
 
