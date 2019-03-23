@@ -63,7 +63,7 @@
       <div class="row" style="text-align: center;">
         <div class="col-md-4" style="text-align: left;">
           <b-button variant="success" v-b-modal.addUserCheckInfo-Modal >单条添加</b-button>
-          <b-button variant="primary" v-b-modal.topProjectInfo-modal @click="''">批量导入</b-button>
+          <b-button variant="primary" v-b-modal.batchImportCheckInfo-Modal @click="''">批量导入</b-button>
         </div>
         <div class="col-md-4">
           <b-pagination
@@ -134,6 +134,39 @@
           <b-button variant="danger" type="reset">重置</b-button>
         </b-form>
       </b-modal>
+      <!-- 批量导入打卡记录 -->
+      <b-modal id="batchImportCheckInfo-Modal" ref="batchImportCheckInfoRef" title="批量导入工作日志" class="text-left" hide-footer>
+        <b-form @submit="onSubmitBatchImportCheckInfo" @reset="onResetBatchImportCheckInfo">
+          <label>选择打卡记录文件:</label>
+          <b-form-group >
+            <b-input-group prepend="打卡记录文件">
+              <b-form-file
+                v-model="checkInfoFile"
+                :state="Boolean(checkInfoFile)"
+                placeholder="请选择一个打卡记录文件"
+                drop-placeholder="请选择一个打卡记录文件" />
+            </b-input-group>
+            <br>
+            <div>
+              <p><b>打卡记录说明：</b></p>
+              <p>
+                <ul>
+                  <li>打卡以工作时长记（小时）</li>
+                  <li>如果当天只有一次打卡，则中午12:00之前打卡算上班打卡，之后算下班打卡</li>
+                  <li>如果没有打卡，算调休或者旷工</li>
+                  <li>如果只有上班打卡记录，无下班打卡记录，除了有说明外，否则算旷工</li>
+                  <li>如果只有上班打记录，下班打卡由于凌晨加班造成，则需说明</li>
+                  <li>如果只有下班打卡记录，无上班打卡记录，除非有说明，否则算旷工半天</li>
+                </ul>
+              </p>
+            </div>
+            <div style="text-align: center;">
+              <b-button variant="success" type="submit">确认导入</b-button>
+              <b-button variant="danger" type="reset">重置</b-button>
+            </div>
+          </b-form-group>
+        </b-form>
+      </b-modal>
     </b-container>
 </template>
 
@@ -188,7 +221,8 @@ export default {
         'checkin': '',
         'checkout': '',
         'check_detail': ''
-      }
+      },
+      checkInfoFile: null
     }
   },
   methods: {
@@ -324,6 +358,13 @@ export default {
     },
     deleteCheckInfo (item) {
       this.removeCheckInfo(item.id)
+    },
+    // 批量导入日志
+    onSubmitBatchImportCheckInfo (evt) {
+      evt.preventDefault()
+    },
+    onResetBatchImportCheckInfo (evt) {
+      evt.preventDefault()
     }
   },
   created () {
