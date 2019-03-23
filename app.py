@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request
+from werkzeug.utils import secure_filename
 from random import *
 from models.attendance import db, Users, Users_Workdiary, UsersCheck, Projects_Level_Two, Projects_Top_Level
 from flask_cors import CORS
 from helpers.common import AlchemyEncoder
 import json
-import datetime
+import time
+import os
 
 app = Flask(__name__,
             static_folder="./dist/static",
@@ -207,6 +209,36 @@ def single_check(check_id):
         db.session.commit()
 
     return jsonify({'status': 'success'})
+
+
+UPLOAD_DIR = 'upload/batchCheckInfo'
+app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
+base_dir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_EXTENSIONS = ('xls', 'xlsx')
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/api/userscheck/batch', methods=['POST'], strict_slashes=False)
+def batch_check_info_upload():
+    file_dir = os.path.join(base_dir, app.config['UPLOAD_FOLDER'])
+    # print(file_dir)
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+    f = request.files['check_file']
+    # print(f.filename)
+
+    if f and allowed_file(f.filename):
+        fname = secure_filename(f.filename)
+        ext = fname.rsplit('.', 1)[1]
+        unix_time = int(time.time())
+        new_filename = str(unix_time) + '.' + ext
+
+        f.save(os.path.join(file_dir, new_filename))
+
+    return jsonify({'result': 'success'})
 
 
 @app.route('/api/workdiary', methods=['GET', 'POST'])

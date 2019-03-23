@@ -135,6 +135,7 @@
           <b-button variant="danger" type="reset">重置</b-button>
         </b-form>
       </b-modal>
+      <!-- 批量导入工作日志 -->
     </b-container>
 </template>
 
@@ -150,7 +151,7 @@ export default {
       currentPage: 1,
       filter: null,
       fields: {
-        'id': {
+        'index': {
           label: '序号'
         },
         'username': {

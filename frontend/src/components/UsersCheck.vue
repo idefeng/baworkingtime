@@ -362,6 +362,25 @@ export default {
     // 批量导入日志
     onSubmitBatchImportCheckInfo (evt) {
       evt.preventDefault()
+      const formData = new FormData()
+      formData.append('check_file', this.checkInfoFile)
+      const options = {
+        url: 'http://localhost:5000/api/userscheck/batch',
+        data: formData,
+        method: 'post',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      console.log(formData.get('check_file'))
+      axios(options)
+        .then((res) => {
+          console.log(res)
+          this.getUsersCheck()
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     },
     onResetBatchImportCheckInfo (evt) {
       evt.preventDefault()

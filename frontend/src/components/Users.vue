@@ -3,32 +3,105 @@
       <div class="row">
         <div class="col-md-10">
           <h1>技术部员工管理</h1>
-          <hr>
-          <button type="button" class="btn btn-success" v-b-modal.user-modal>添加员工</button>
-          <br><br>
-          <table class="table table-hover table-striped">
-            <thead>
-              <tr>
-                <!--<th scope="col">ID</th>-->
-                <th scope="col">员工卡号</th>
-                <th scope="col">员工姓名</th>
-                <th scope="col">电子邮件</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(user, index) in users" :key="index">
-                <!--<td >{{ user.id }}</td>-->
-                <td>{{ user.user_cardnum }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                  <button type="button" class="btn btn-warning" v-b-modal.user-update-modal @click="editUser(user)">更新</button>
-                  <button type="button" class="btn btn-danger" @click="onDeleteUser(user)">删除</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <b-row>
+            <b-col md="6" class="my-3">
+              <b-form-group label-cols-sm="3" class="mb-1">
+                <b-input-group prepend="查找">
+                  <b-form-input v-model="filter" placeholder="输入关键字搜索" />
+                  <b-input-group-append>
+                    <b-button :disabled="!filter" @click="filter = ''">清除条件</b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+          <b-table
+            id="UsersTable"
+            show-empty
+            empty-text="无数据可加载..."
+            striped
+            hover
+            :sort-by.sync="sortBy"
+            :filter="filter"
+            @filtered="filterChanged"
+            :fields="fields"
+            :items="items"
+            :per-page="perPage"
+            :current-page="currentPage"
+          >
+            <template slot="index" slot-scope="data">
+              {{ data.index + 1 }}
+            </template>
+            <template slot="actions" slot-scope="row">
+              <b-button class="btn-warning" v-b-modal.user-update-modal @click="editUser(row.item)">编辑</b-button>
+              <b-button class="btn-danger" @click="row.toggleDetails">
+                {{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>
+            </template>
+            <template slot="row-details" slot-scope="row">
+              <b-card>
+                <b-row class="mb-6">
+                  <b-col class="text-sm-right"><b>员工ID：</b></b-col>
+                  <b-col>{{ row.item.id}}</b-col>
+                  <b-col class="text-sm-right"><b>用户名称：</b></b-col>
+                  <b-col class="text-sm-left">{{ row.item.username}}</b-col>
+                  <b-col class="text-sm-right"><b>电子邮件：</b></b-col>
+                  <b-col class="text-sm-left">{{ row.item.email}}</b-col>
+                </b-row>
+                <!--<hr>-->
+                <!--<b-row class="mb-6">-->
+                  <!--<b-col class="text-sm-right"><b>工作时长：</b></b-col>-->
+                  <!--<b-col>{{ row.item.work_hours}}</b-col>-->
+                  <!--<b-col class="text-sm-right"><b>工作项目：</b></b-col>-->
+                  <!--<b-col class="text-sm-left">{{ row.item.project_name}}</b-col>-->
+                  <!--<b-col class="text-sm-right"><b>工作内容：</b></b-col>-->
+                  <!--<b-col class="text-sm-left">{{ row.item.work_content}}</b-col>-->
+                <!--</b-row>-->
+                <hr>
+                <b-button class="btn-danger" @click="onDeleteUser(row.item)">确定删除该条日志信息?</b-button>
+              </b-card>
+            </template>
+          </b-table>
+          </b-row>
+           <div class="row" style="text-align: center;">
+            <div class="col-md-4" style="text-align: left;">
+              <button type="button" class="btn btn-success" v-b-modal.user-modal>添加员工</button>
+              <b-button variant="primary" v-b-modal.batchImportCheckInfo-Modal @click="''">批量导入</b-button>
+            </div>
+
+          <div class="col-md-4">
+          <b-pagination
+            :total-rows="totalRows"
+            :per-page="perPage"
+            v-model="currentPage"
+            aria-controls="projectsTable"
+            ></b-pagination>
+        </div>
+        <div class="col-md-4">打卡记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
+
+          <!--<table class="table table-hover table-striped">-->
+            <!--<thead>-->
+              <!--<tr>-->
+                <!--&lt;!&ndash;<th scope="col">ID</th>&ndash;&gt;-->
+                <!--<th scope="col">员工卡号</th>-->
+                <!--<th scope="col">员工姓名</th>-->
+                <!--<th scope="col">电子邮件</th>-->
+                <!--<th></th>-->
+              <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+              <!--<tr v-for="(user, index) in users" :key="index">-->
+                <!--&lt;!&ndash;<td >{{ user.id }}</td>&ndash;&gt;-->
+                <!--<td>{{ user.user_cardnum }}</td>-->
+                <!--<td>{{ user.username }}</td>-->
+                <!--<td>{{ user.email }}</td>-->
+                <!--<td>-->
+                  <!--<button type="button" class="btn btn-warning" v-b-modal.user-update-modal @click="editUser(user)">更新</button>-->
+                  <!--<button type="button" class="btn btn-danger" @click="onDeleteUser(user)">删除</button>-->
+                <!--</td>-->
+              <!--</tr>-->
+            <!--</tbody>-->
+          <!--</table>-->
         </div>
       </div>
       <!--添加用户-->
@@ -94,6 +167,7 @@
         </b-form>
       </b-modal>
     </div>
+    </div>
 </template>
 
 <script>
@@ -103,7 +177,30 @@ export default {
   name: 'Users',
   data () {
     return {
-      users: [],
+      fields: {
+        'index': {
+          label: '序号'
+        },
+        'user_cardnum': {
+          label: '员工卡号',
+          sortable: true
+        },
+        'username': {
+          label: '用户名'
+        },
+        'email': {
+          label: 'Email'
+        },
+        'actions': {
+          label: '操作'
+        }
+      },
+      sortBy: 'user_cardnum',
+      items: [],
+      filter: null,
+      totalRows: 0,
+      perPage: 10,
+      currentPage: 1,
       addUserForm: {
         cardnum: '',
         username: '',
@@ -124,7 +221,8 @@ export default {
         .then((res) => {
           // this.users = JSON.parse(res.data.users)
           // console.log(res.data.users)
-          this.users = res.data.users
+          this.items = res.data.users
+          this.totalRows = this.items.length
         })
         .catch((error) => {
           console.error(error)
@@ -212,6 +310,10 @@ export default {
     },
     onDeleteUser (user) {
       this.removeUser(user.id)
+    },
+    // 表格过滤事件
+    filterChanged (filteredItems) {
+      this.totalRows = filteredItems.length
     }
   },
   created () {
