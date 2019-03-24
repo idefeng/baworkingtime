@@ -114,7 +114,9 @@
           <label>用户名: {{ editCheckInfoForm.username}}</label>
           <b-form-group >
             <b-input-group prepend="上班具体日期">
-              <b-input v-model="editCheckInfoForm.check_date"></b-input>
+              <!--<b-input v-model="editCheckInfoForm.check_date"></b-input>-->
+              <!--<input size="16" value="editCheckInfoForm.check_date" class="form_datetime">-->
+              <date-picker v-model="editCheckInfoForm.check_date" :config="date_options"></date-picker>
             </b-input-group>
           </b-form-group>
           <b-form-group >
@@ -176,12 +178,23 @@
 
 <script>
 import axios from 'axios'
+import $ from 'jquery'
+import datePicker from 'vue-bootstrap-datetimepicker'
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css'
 
 export default {
   name: 'UsersCheck',
   data () {
     return {
       options: [],
+      date_options: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+        locale: 'zh-cn',
+        tooltips: {
+          selectTime: ''
+        }
+      },
       selected: null,
       show: false,
       filter: null,
@@ -393,9 +406,25 @@ export default {
       this.$refs.batchImportCheckInfoRef.hide()
     }
   },
+  components: {
+    datePicker
+  },
   created () {
     this.getUsersCheck()
     this.getUsers()
+    $.extend(true, $.fn.datetimepicker.defaults, {
+      icons: {
+        time: 'far fa-clock',
+        date: 'far fa-calendar',
+        up: 'fas fa-arrow-up',
+        down: 'fas fa-arrow-down',
+        previous: 'fas fa-chevron-left',
+        next: 'fas fa-chevron-right',
+        today: 'fas fa-calendar-check',
+        clear: 'far fa-trash-alt',
+        close: 'far fa-times-circle'
+      }
+    })
   }
 }
 </script>
