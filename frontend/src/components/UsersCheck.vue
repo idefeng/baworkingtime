@@ -102,8 +102,10 @@
         <b-form-group label="有特殊打卡说明吗?">
           <b-form-textarea placeholder="打卡说明" rows="3" id="check_desc" v-model="checkInfoForm.check_detail"></b-form-textarea>
         </b-form-group>
-        <b-button type="submit" variant="primary">添加记录</b-button>
-        <b-button type="reset" variant="danger">重置</b-button>
+        <div style="text-align: center;">
+          <b-button type="submit" variant="primary">添加记录</b-button>
+          <b-button type="reset" variant="danger">重置</b-button>
+        </div>
       </b-form>
       </b-modal>
       <!-- 编辑打卡记录 -->
@@ -130,8 +132,10 @@
               <b-input v-model="editCheckInfoForm.check_detail"></b-input>
             </b-input-group>
           </b-form-group>
-          <b-button variant="success" type="submit">确认</b-button>
-          <b-button variant="danger" type="reset">重置</b-button>
+          <div style="text-align: center;">
+            <b-button variant="success" type="submit">确认</b-button>
+            <b-button variant="danger" type="reset">重置</b-button>
+          </div>
         </b-form>
       </b-modal>
       <!-- 批量导入打卡记录 -->
