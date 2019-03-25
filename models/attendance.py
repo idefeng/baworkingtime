@@ -17,7 +17,7 @@ import json
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:123456@localhost:3306/attendance?charset=utf8"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
 db = SQLAlchemy(app)
 
 
@@ -27,13 +27,15 @@ class Users(db.Model):
     user_cardnum = db.Column(db.String(80), unique=True)
     username = db.Column(db.String(80), unique=False)
     email = db.Column(db.String(120), unique=True)
+    entry_time = db.Column(db.DateTime)
     relate_usersCheck = db.relationship('UsersCheck', backref='relate_Users')
     relate_usersDiary = db.relationship('Users_Workdiary', backref='relate_users_diary')
 
-    def __init__(self, user_cardnum, username, email):
+    def __init__(self, user_cardnum, username, email, entry_time):
         self.user_cardnum = user_cardnum
         self.username = username
         self.email = email
+        self.entry_time = entry_time
 
     def __repr__(self):
         return '{\'User\': %r}' % self.username

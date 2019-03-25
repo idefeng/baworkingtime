@@ -44,13 +44,19 @@ def all_users():
         db.session.add(user)
         db.session.commit()
         db.session.remove()
-    else:
-        users = Users.query.all()
-        result = json.loads(json.dumps(users, cls=AlchemyEncoder))
-        return jsonify({'users': result})
 
     users = Users.query.all()
-    result = json.loads(json.dumps(users, cls=AlchemyEncoder))
+    result = []
+    for user in users:
+        result.append({
+            'id': user.id,
+            'user_cardnum': user.user_cardnum,
+            'username': user.username,
+            'email': user.email,
+            'entry_time': user.entry_time.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    # result = json.loads(json.dumps(users, cls=AlchemyEncoder))
+    print(result)
     return jsonify({'users': result})
 
 

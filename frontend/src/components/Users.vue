@@ -41,6 +41,12 @@
           {{ data.row.email }}
         </template>
       </el-table-column>
+    <el-table-column
+        label="入职时间">
+        <template  slot-scope="data">
+          {{ data.row.entry_time }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作">
         <template  slot-scope="data">
@@ -192,7 +198,7 @@ export default {
       axios.get(path)
         .then((res) => {
           // this.users = JSON.parse(res.data.users)
-          // console.log(res.data.users)
+          console.log(res.data.users)
           this.items = res.data.users
           this.totalRows = this.items.length
         })
