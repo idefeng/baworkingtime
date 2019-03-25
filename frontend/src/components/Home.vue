@@ -1,9 +1,5 @@
 <template>
-    <div class="container">
-      <p>Home Page</p>
-      <p>Random number from backend: {{ randomNumber }}</p>
-      <button type="button" class="btn btn-primary" @click="getRandomFromBackend">New random number</button>
-    </div>
+    <p>ddd</p>
 </template>
 
 <script>
