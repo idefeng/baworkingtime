@@ -44,7 +44,7 @@
       <el-table-column
         label="操作">
         <template  slot-scope="data">
-          <el-button @click="editUser(data.row)">编辑</el-button>
+          <el-button type="warning" @click="editUser(data.row)">编辑</el-button>
           <el-button type="danger" @click="popDeleteUserDialog(data.row)">删除</el-button>
         </template>
       </el-table-column>
