@@ -29,15 +29,19 @@
             </el-submenu>
             <el-menu-item index="2">
               <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
+              <span slot="title"><a href="/Users">用户管理</a></span>
             </el-menu-item>
             <el-menu-item index="3" disabled>
               <i class="el-icon-document"></i>
-              <span slot="title">导航三</span>
+              <span slot="title"><a href="/Projects">项目管理</a></span>
             </el-menu-item>
             <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航四</span>
+              <i class="el-icon-bell"></i>
+              <span slot="title"><a href="/Userscheck">打卡管理</a></span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-date"></i>
+              <span slot="title"><a href="/workdiary">日志管理</a></span>
             </el-menu-item>
           </el-menu>
       </el-row>

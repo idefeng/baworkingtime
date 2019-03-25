@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="margin-top: 0px;">
+  <div id="app" style="margin-top: 0px;margin-right: 10px;">
     <el-container>
       <!--<el-header>Header</el-header>-->
       <Header/>
@@ -9,6 +9,7 @@
         <router-view/>
       </el-col>
       </el-row>
+      <br>
       <el-footer>
         <p style="text-align: center">北京博奥网络教育科技股份有限公司 技术部</p>
       </el-footer>

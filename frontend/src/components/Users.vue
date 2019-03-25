@@ -1,15 +1,30 @@
 <template>
-    <el-table
+  <div>
+    <el-row style="height: 50px; padding-top: 20px;">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+          <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+          <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+        </el-breadcrumb>
+    </el-row>
+  <el-table
       id="UsersTable"
-      :data="items"
+      :data="items.slice((currentPage-1)*pageSize, currentPage*pageSize)"
+      style="margin: 5px 5px;"
+      stripe
+      border
+      :default-sort="{prop: 'user_cardnum', order: 'ascending'}"
     >
       <el-table-column
-        label="序号“"
         type="index"
       >
       </el-table-column>
       <el-table-column
-        label="员工卡号">
+        prop="user_cardnum"
+        label="员工卡号"
+        sortable
+      >
         <template  slot-scope="data">
           {{ data.row.user_cardnum }}
         </template>
@@ -29,8 +44,8 @@
       <el-table-column
         label="操作">
         <template  slot-scope="data">
-          <el-button @click="editUser(data.item)">编辑</el-button>
-          <el-button type="danger" @click="onDeleteUser(data.item)">删除</el-button>
+          <el-button @click="editUser(data.row)">编辑</el-button>
+          <el-button type="danger" @click="popDeleteUserDialog(data.row)">删除</el-button>
         </template>
       </el-table-column>
           <!--<template slot="actions" slot-scope="row">-->
@@ -71,69 +86,77 @@
       <!--<div class="col-md-4">打卡记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>-->
       <!--</div>-->
     <!--</div>-->
-    <!--&lt;!&ndash;添加用户&ndash;&gt;-->
-    <!--<b-modal ref="addUser" id="user-modal" title="添加员工" hide-footer>-->
-      <!--<b-form @submit="onSubmit" @reset="onReset" class="w-100">-->
-        <!--<b-input-group id="form-cardnum-group"  prepend="员工卡号:" label-for="form-cardnum-input">-->
-          <!--<b-form-input id="form-cardnum-input" type="text"-->
-                        <!--v-model="addUserForm.cardnum"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工卡号" trim >-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-input-group id="form-username-group" prepend="员工姓名:" label-for="form-username-input">-->
-          <!--<b-form-input id="form-username-input" type="text"-->
-                        <!--v-model="addUserForm.username"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工姓名">-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-input-group id="form-email-group" prepend="电子邮件:" label-for="form-email-input">-->
-          <!--<b-form-input id="form-email-input" type="text"-->
-                        <!--v-model="addUserForm.email"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工电子邮件">-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-button type="submit" variant="primary">添加</b-button>-->
-        <!--<b-button type="reset" variant="danger">重置</b-button>-->
-      <!--</b-form>-->
-    <!--</b-modal>-->
-    <!--&lt;!&ndash;更新用户信息&ndash;&gt;-->
-    <!--<b-modal ref="editUser" id="user-update-modal" title="更新员工信息" hide-footer>-->
-      <!--<b-form @submit="onSubmitUpdate" @reset="onResetUpdate" class="w-100">-->
-        <!--<b-input-group id="form-cardnum-edit-group" prepend="员工卡号:" label-for="form-cardnum-edit-input">-->
-          <!--<b-form-input id="form-cardnum-edit-input" type="text"-->
-                        <!--v-model="editUserForm.user_cardnum"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工卡号">-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-input-group id="form-username-edit-group" prepend="员工姓名:" label-for="form-username-edit-input">-->
-          <!--<b-form-input id="form-username-edit-input" type="text"-->
-                        <!--v-model="editUserForm.username"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工姓名">-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-input-group id="form-email-edit-group" prepend="电子邮件:" label-for="form-email-edit-input">-->
-          <!--<b-form-input id="form-email-edit-input" type="text"-->
-                        <!--v-model="editUserForm.email"-->
-                        <!--required-->
-                        <!--placeholder="请输入员工电子邮件">-->
-          <!--</b-form-input>-->
-        <!--</b-input-group>-->
-        <!--<br>-->
-        <!--<b-button type="submit" variant="primary">更新信息</b-button>-->
-        <!--<b-button type="reset" variant="danger">重置</b-button>-->
-      <!--</b-form>-->
-    <!--</b-modal>-->
   </el-table>
+    <el-row>
+      <el-col :span="4">
+        <el-button type="primary" @click="userAddDialogShow = true">添加员工</el-button>
+        <el-button type="success" @click="''">批量导入</el-button>
+      </el-col>
+      <el-col :span="20">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalRows">
+        </el-pagination>
+      </el-col>
+    </el-row>
+  <!--更新用户信息-->
+    <el-dialog id="user-update-dialog" title="更新员工信息" :visible.sync="userUpdateDialogShow" center width="30%">
+      <el-form :model="editUserForm" label-width="20%">
+        <el-form-item label="员工卡号:">
+          <el-input v-model="editUserForm.user_cardnum"></el-input>
+        </el-form-item>
+        <el-form-item label="员工姓名:">
+          <el-input v-model="editUserForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="电子邮件:">
+          <el-input v-model="editUserForm.email"></el-input>
+        </el-form-item>
+        <el-form-item style="text-align: right;">
+          <b-button type="submit" @click="onSubmitUpdate">更新信息</b-button>
+          <b-button type="reset" @click="onResetUpdate">重置</b-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!--添加用户-->
+    <el-dialog id="user-add-dialog" title="添加员工" :visible.sync="userAddDialogShow" width="30%">
+      <el-form :model="addUserForm" label-width="20%">
+        <el-form-item label="员工卡号:">
+          <el-input v-model="addUserForm.cardnum" placeholder="请输入员工卡号"></el-input>
+        </el-form-item>
+        <el-form-item label="员工姓名:">
+          <el-input v-model="addUserForm.username" placeholder="请输入员工姓名">
+          </el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="电子邮件:">
+          <el-input v-model="addUserForm.email" placeholder="请输入员工电子邮件">
+          </el-input>
+        </el-form-item>
+        <el-form-item style="text-align: right;">
+          <el-button type="primary" @click="onSubmit">添加</el-button>
+          <el-button type="danger" @click="onReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!-- 删除用户信息的确认对话框 -->
+    <el-dialog
+      title="确认删除用户信息?"
+      :visible.sync="deleteUserDialogVisible"
+      width="30%"
+      :model="editUserForm"
+      center>
+      <span style="text-align: center">确认要删除此用户信息?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="onDeleteUser(editUserForm.id)" type="danger">删除</el-button>
+        <el-button @click="noDeleteUser" type="info">取消删除</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -144,6 +167,9 @@ export default {
   data () {
     return {
       items: [],
+      userUpdateDialogShow: false,
+      userAddDialogShow: false,
+      deleteUserDialogVisible: false,
       addUserForm: {
         cardnum: '',
         username: '',
@@ -154,7 +180,10 @@ export default {
         user_cardnum: '',
         username: '',
         email: ''
-      }
+      },
+      totalRows: 0,
+      pageSize: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -165,6 +194,7 @@ export default {
           // this.users = JSON.parse(res.data.users)
           // console.log(res.data.users)
           this.items = res.data.users
+          this.totalRows = this.items.length
         })
         .catch((error) => {
           console.error(error)
@@ -194,6 +224,7 @@ export default {
         })
     },
     editUser (user) {
+      this.userUpdateDialogShow = true
       this.editUserForm = user
       // console.log(this.editUserForm)
     },
@@ -208,7 +239,7 @@ export default {
     },
     onSubmit (evt) {
       evt.preventDefault()
-      this.$refs.addUser.hide()
+      this.userAddDialogShow = false
       const payload = {
         cardnum: this.addUserForm.cardnum,
         username: this.addUserForm.username,
@@ -219,13 +250,13 @@ export default {
     },
     onReset (evt) {
       evt.preventDefault()
-      this.$refs.addUser.hide()
+      this.userAddDialogShow = false
       this.initForm()
     },
     //  更新信息按钮事件
     onSubmitUpdate (evt) {
       evt.preventDefault()
-      this.$refs.editUser.hide()
+      this.userUpdateDialogShow = false
       const payload = {
         user_cardnum: this.editUserForm.user_cardnum,
         username: this.editUserForm.username,
@@ -235,7 +266,7 @@ export default {
     },
     onResetUpdate (evt) {
       evt.preventDefault()
-      this.$refs.editUser.hide()
+      this.userUpdateDialogShow = false
       this.initForm()
       this.getUsers()
     },
@@ -250,8 +281,25 @@ export default {
           this.getUsers()
         })
     },
-    onDeleteUser (user) {
-      this.removeUser(user.id)
+    popDeleteUserDialog (user) {
+      this.deleteUserDialogVisible = true
+      this.editUserForm = user
+    },
+    onDeleteUser (userID) {
+      // console.log(userID)
+      this.deleteUserDialogVisible = false
+      this.removeUser(userID)
+    },
+    noDeleteUser () {
+      this.deleteUserDialogVisible = false
+    },
+    handleSizeChange (val) {
+      // console.log(val)
+      this.pageSize = val
+    },
+    handleCurrentChange (val) {
+      // console.log(val)
+      this.currentPage = val
     }
   },
   created () {
