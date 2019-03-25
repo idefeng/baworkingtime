@@ -3,10 +3,12 @@
     <el-container>
       <!--<el-header>Header</el-header>-->
       <Header/>
+      <el-row>
       <Aside/>
-      <el-main>
+      <el-col :span="20">
         <router-view/>
-      </el-main>
+      </el-col>
+      </el-row>
       <el-footer>
         <p style="text-align: center">北京博奥网络教育科技股份有限公司 技术部</p>
       </el-footer>

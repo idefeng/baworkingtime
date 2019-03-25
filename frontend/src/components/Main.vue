@@ -1,5 +1,7 @@
 <template>
-    <el-main></el-main>
+    <el-col :span="20">
+      ddd
+    </el-col>
 </template>
 
 <script>

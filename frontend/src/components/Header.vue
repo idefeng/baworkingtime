@@ -1,5 +1,5 @@
 <template>
-    <el-header style="padding: 0;">
+    <el-row>
       <el-menu
         :default-active="activeIndex"
         class="el-menu-demo"
@@ -25,7 +25,7 @@
         <el-menu-item index="3" disabled>消息中心</el-menu-item>
         <el-menu-item index="4"><a href="#">个人中心</a></el-menu-item>
       </el-menu>
-    </el-header>
+    </el-row>
     <!--<div>-->
       <!--<b-navbar toggleable="lg" type="dark" variant="success">-->
         <!--<b-navbar-brand href="/">首页</b-navbar-brand>-->

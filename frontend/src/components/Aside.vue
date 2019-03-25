@@ -1,6 +1,5 @@
 <template>
-    <el-aside>
-      <el-col :span="16">
+    <el-col :span="4">
       <el-row class="tac">
         <el-menu
             default-active="2"
@@ -42,8 +41,7 @@
             </el-menu-item>
           </el-menu>
       </el-row>
-      </el-col>
-    </el-aside>
+    </el-col>
 </template>
 
 <script>
