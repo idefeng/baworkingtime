@@ -7,6 +7,7 @@ from helpers.common import AlchemyEncoder
 from openpyxl import load_workbook
 import json
 import time
+import datetime
 import os
 
 app = Flask(__name__,
@@ -33,30 +34,38 @@ def random_number():
 
 @app.route('/api/users', methods=['GET', 'POST'])
 def all_users():
-    if request.method == 'POST':
+    if request.method == 'POST':    # 增加用户
         post_data = request.get_json()
-        # result.append({
-        #     'user_cardnum': post_data.get('user_cardnum'),
-        #     'username': post_data.get('username'),
-        #     'email': post_data.get('email')
-        # })
-        user = Users(post_data.get('cardnum'), post_data.get('username'), post_data.get('email'))
+        user = Users(post_data.get('cardnum'),
+                     post_data.get('username'),
+                     post_data.get('email'),
+                     post_data.get('entry_time'))
+
         db.session.add(user)
         db.session.commit()
         db.session.remove()
 
-    users = Users.query.all()
+    users = Users.query.all()   # 查询所有用户
     result = []
     for user in users:
-        result.append({
-            'id': user.id,
-            'user_cardnum': user.user_cardnum,
-            'username': user.username,
-            'email': user.email,
-            'entry_time': user.entry_time.strftime('%Y-%m-%d %H:%M:%S')
-        })
+        if user.entry_time is None:
+            result.append({
+                'id': user.id,
+                'user_cardnum': user.user_cardnum,
+                'username': user.username,
+                'email': user.email,
+                'entry_time': ''
+            })
+        else:
+            result.append({
+                'id': user.id,
+                'user_cardnum': user.user_cardnum,
+                'username': user.username,
+                'email': user.email,
+                'entry_time': user.entry_time.strftime("%Y-%m-%d %H:%M:%S")
+            })
     # result = json.loads(json.dumps(users, cls=AlchemyEncoder))
-    print(result)
+    # print(result)
     return jsonify({'users': result})
 
 
@@ -69,6 +78,7 @@ def single_user(userid):
         user.user_cardnum = post_data.get('user_cardnum')
         user.username = post_data.get('username')
         user.email = post_data.get('email')
+        user.entry_time = datetime.datetime.strptime(post_data.get('entry_time'), "%Y-%m-%d %H:%M:%S")
         db.session.commit()
         db.session.remove()
     if request.method == 'DELETE':

@@ -54,44 +54,6 @@
           <el-button type="danger" @click="popDeleteUserDialog(data.row)">删除</el-button>
         </template>
       </el-table-column>
-          <!--<template slot="actions" slot-scope="row">-->
-            <!--<b-button class="btn-warning" v-b-modal.user-update-modal @click="editUser(row.item)">编辑</b-button>-->
-            <!--<b-button class="btn-danger" @click="row.toggleDetails">-->
-              <!--{{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>-->
-          <!--</template>-->
-          <!--<template slot="row-details" slot-scope="row">-->
-            <!--<b-card>-->
-              <!--<b-row class="mb-6">-->
-                <!--<b-col class="text-sm-right"><b>员工ID：</b></b-col>-->
-                <!--<b-col>{{ row.item.id}}</b-col>-->
-                <!--<b-col class="text-sm-right"><b>用户名称：</b></b-col>-->
-                <!--<b-col class="text-sm-left">{{ row.item.username}}</b-col>-->
-                <!--<b-col class="text-sm-right"><b>电子邮件：</b></b-col>-->
-                <!--<b-col class="text-sm-left">{{ row.item.email}}</b-col>-->
-              <!--</b-row>-->
-              <!--<hr>-->
-              <!--<b-button class="btn-danger" @click="onDeleteUser(row.item)">确定删除该条日志信息?</b-button>-->
-            <!--</b-card>-->
-          <!--</template>-->
-        <!--</el-table>-->
-        <!--&lt;!&ndash;</b-row>&ndash;&gt;-->
-         <!--<div class="row" style="text-align: center;">-->
-          <!--<div class="col-md-4" style="text-align: left;">-->
-            <!--<button type="button" class="btn btn-success" v-b-modal.user-modal>添加员工</button>-->
-            <!--<b-button variant="primary" v-b-modal.batchImportCheckInfo-Modal @click="''">批量导入</b-button>-->
-          <!--</div>-->
-
-        <!--<div class="col-md-4">-->
-        <!--<b-pagination-->
-          <!--:total-rows="totalRows"-->
-          <!--:per-page="perPage"-->
-          <!--v-model="currentPage"-->
-          <!--aria-controls="projectsTable"-->
-          <!--&gt;</b-pagination>-->
-      <!--</div>-->
-      <!--<div class="col-md-4">打卡记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>-->
-      <!--</div>-->
-    <!--</div>-->
   </el-table>
     <el-row>
       <el-col :span="4">
@@ -122,6 +84,9 @@
         <el-form-item label="电子邮件:">
           <el-input v-model="editUserForm.email"></el-input>
         </el-form-item>
+        <el-form-item label="入职时间:">
+          <el-date-picker v-model="editUserForm.entry_time" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+        </el-form-item>
         <el-form-item style="text-align: right;">
           <b-button type="submit" @click="onSubmitUpdate">更新信息</b-button>
           <b-button type="reset" @click="onResetUpdate">重置</b-button>
@@ -142,6 +107,13 @@
         <el-form-item label="电子邮件:">
           <el-input v-model="addUserForm.email" placeholder="请输入员工电子邮件">
           </el-input>
+        </el-form-item>
+        <el-form-item label="入职时间:">
+          <el-date-picker type="datetime"
+                          v-model="addUserForm.entry_time"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          placeholder="请输入员工入职日期">
+          </el-date-picker>
         </el-form-item>
         <el-form-item style="text-align: right;">
           <el-button type="primary" @click="onSubmit">添加</el-button>
@@ -179,13 +151,15 @@ export default {
       addUserForm: {
         cardnum: '',
         username: '',
-        email: ''
+        email: '',
+        entry_time: ''
       },
       editUserForm: {
         id: '',
         user_cardnum: '',
         username: '',
-        email: ''
+        email: '',
+        entry_time: ''
       },
       totalRows: 0,
       pageSize: 10,
@@ -198,7 +172,7 @@ export default {
       axios.get(path)
         .then((res) => {
           // this.users = JSON.parse(res.data.users)
-          console.log(res.data.users)
+          // console.log(res.data.users)
           this.items = res.data.users
           this.totalRows = this.items.length
         })
@@ -238,10 +212,12 @@ export default {
       this.addUserForm.cardnum = ''
       this.addUserForm.username = ''
       this.addUserForm.email = ''
+      this.addUserForm.entry_time = ''
       this.editUserForm.id = ''
       this.editUserForm.user_cardnum = ''
       this.editUserForm.username = ''
       this.editUserForm.email = ''
+      this.editUserForm.entry_time = ''
     },
     onSubmit (evt) {
       evt.preventDefault()
@@ -249,7 +225,8 @@ export default {
       const payload = {
         cardnum: this.addUserForm.cardnum,
         username: this.addUserForm.username,
-        email: this.addUserForm.email
+        email: this.addUserForm.email,
+        entry_time: this.addUserForm.entry_time
       }
       this.addUser(payload)
       this.initForm()
@@ -266,8 +243,10 @@ export default {
       const payload = {
         user_cardnum: this.editUserForm.user_cardnum,
         username: this.editUserForm.username,
-        email: this.editUserForm.email
+        email: this.editUserForm.email,
+        entry_time: this.editUserForm.entry_time
       }
+      console.log(payload)
       this.updateUser(payload, this.editUserForm.id)
     },
     onResetUpdate (evt) {
