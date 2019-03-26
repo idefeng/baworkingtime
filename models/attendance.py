@@ -24,18 +24,20 @@ db = SQLAlchemy(app)
 class Users(db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
-    user_cardnum = db.Column(db.String(80), unique=True)
-    username = db.Column(db.String(80), unique=False)
-    email = db.Column(db.String(120), unique=True)
-    entry_time = db.Column(db.DateTime)
+    user_cardnum = db.Column(db.String(80), unique=True, comment='员工卡号')
+    username = db.Column(db.String(80), unique=False, comment='用户名')
+    email = db.Column(db.String(120), unique=True, comment='电子邮件')
+    entry_time = db.Column(db.DateTime, comment='入职时间')
+    job_title = db.Column(db.String(20), nullable=True, comment='工作岗位')
     relate_usersCheck = db.relationship('UsersCheck', backref='relate_Users')
     relate_usersDiary = db.relationship('Users_Workdiary', backref='relate_users_diary')
 
-    def __init__(self, user_cardnum, username, email, entry_time):
+    def __init__(self, user_cardnum, username, email, entry_time, job_title):
         self.user_cardnum = user_cardnum
         self.username = username
         self.email = email
         self.entry_time = entry_time
+        self.job_title = job_title
 
     def __repr__(self):
         return '{\'User\': %r}' % self.username

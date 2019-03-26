@@ -36,6 +36,12 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="岗位名称">
+        <template  slot-scope="data">
+          {{ data.row.job_title }}
+        </template>
+      </el-table-column>
+      <el-table-column
         label="Email">
         <template  slot-scope="data">
           {{ data.row.email }}
@@ -153,14 +159,16 @@ export default {
         cardnum: '',
         username: '',
         email: '',
-        entry_time: ''
+        entry_time: '',
+        job_title: ''
       },
       editUserForm: {
         id: '',
         user_cardnum: '',
         username: '',
         email: '',
-        entry_time: ''
+        entry_time: '',
+        job_title: ''
       },
       totalRows: 0,
       pageSize: 10,
@@ -214,11 +222,13 @@ export default {
       this.addUserForm.username = ''
       this.addUserForm.email = ''
       this.addUserForm.entry_time = ''
+      this.addUserForm.job_title = ''
       this.editUserForm.id = ''
       this.editUserForm.user_cardnum = ''
       this.editUserForm.username = ''
       this.editUserForm.email = ''
       this.editUserForm.entry_time = ''
+      this.editUserForm.job_title = ''
     },
     onSubmit (evt) {
       evt.preventDefault()
@@ -227,7 +237,8 @@ export default {
         cardnum: this.addUserForm.cardnum,
         username: this.addUserForm.username,
         email: this.addUserForm.email,
-        entry_time: this.addUserForm.entry_time
+        entry_time: this.addUserForm.entry_time,
+        job_title: this.addUserForm.job_title
       }
       this.addUser(payload)
       this.initForm()
@@ -245,7 +256,8 @@ export default {
         user_cardnum: this.editUserForm.user_cardnum,
         username: this.editUserForm.username,
         email: this.editUserForm.email,
-        entry_time: this.editUserForm.entry_time
+        entry_time: this.editUserForm.entry_time,
+        job_title: this.editUserForm.job_title
       }
       console.log(payload)
       this.updateUser(payload, this.editUserForm.id)

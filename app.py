@@ -39,7 +39,8 @@ def all_users():
         user = Users(post_data.get('cardnum'),
                      post_data.get('username'),
                      post_data.get('email'),
-                     post_data.get('entry_time'))
+                     post_data.get('entry_time'),
+                     post_data.get('job_title'))
 
         db.session.add(user)
         db.session.commit()
@@ -54,7 +55,8 @@ def all_users():
                 'user_cardnum': user.user_cardnum,
                 'username': user.username,
                 'email': user.email,
-                'entry_time': ''
+                'entry_time': '',
+                'job_title': user.job_title
             })
         else:
             result.append({
@@ -62,7 +64,8 @@ def all_users():
                 'user_cardnum': user.user_cardnum,
                 'username': user.username,
                 'email': user.email,
-                'entry_time': user.entry_time.strftime("%Y-%m-%d %H:%M:%S")
+                'entry_time': user.entry_time.strftime("%Y-%m-%d %H:%M:%S"),
+                'job_title': user.job_title
             })
     # result = json.loads(json.dumps(users, cls=AlchemyEncoder))
     # print(result)
@@ -79,6 +82,7 @@ def single_user(userid):
         user.username = post_data.get('username')
         user.email = post_data.get('email')
         user.entry_time = datetime.datetime.strptime(post_data.get('entry_time'), "%Y-%m-%d %H:%M:%S")
+        user.job_title = post_data.get('job_title')
         db.session.commit()
         db.session.remove()
     if request.method == 'DELETE':
