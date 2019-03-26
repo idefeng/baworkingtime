@@ -94,7 +94,7 @@
       </el-form>
     </el-dialog>
     <!--添加用户-->
-    <el-dialog id="user-add-dialog" title="添加员工" :visible.sync="userAddDialogShow" width="30%">
+    <el-dialog id="user-add-dialog" title="添加员工" :visible.sync="userAddDialogShow" width="30%" center>
       <el-form :model="addUserForm" label-width="20%">
         <el-form-item label="员工卡号:">
           <el-input v-model="addUserForm.cardnum" placeholder="请输入员工卡号"></el-input>
@@ -112,7 +112,8 @@
           <el-date-picker type="datetime"
                           v-model="addUserForm.entry_time"
                           value-format="yyyy-MM-dd HH:mm:ss"
-                          placeholder="请输入员工入职日期">
+                          placeholder="请输入员工入职日期"
+                          >
           </el-date-picker>
         </el-form-item>
         <el-form-item style="text-align: right;">
