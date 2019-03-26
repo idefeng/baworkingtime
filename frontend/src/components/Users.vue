@@ -32,7 +32,7 @@
       <el-table-column
         label="员工姓名">
         <template  slot-scope="data">
-          {{ data.row.username }}
+          {{ data.row.username }}<el-tag type="success">{{ getDays(data.row.entry_time) }}年</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -176,6 +176,9 @@ export default {
         entry_time: '',
         job_title: ''
       },
+      show: true,
+      user_type: '',
+      user_tag: '',
       totalRows: 0,
       pageSize: 10,
       currentPage: 1
@@ -265,7 +268,7 @@ export default {
         entry_time: this.editUserForm.entry_time,
         job_title: this.editUserForm.job_title
       }
-      console.log(payload)
+      // console.log(payload)
       this.updateUser(payload, this.editUserForm.id)
     },
     onResetUpdate (evt) {
@@ -304,6 +307,16 @@ export default {
     handleCurrentChange (val) {
       // console.log(val)
       this.currentPage = val
+    },
+    // 计算天数
+    getDays (sdate) {
+      const sDate = new Date(sdate).getFullYear() + '-' + new Date(sdate).getMonth() + '-' + new Date(sdate).getDay()
+      // console.log(sDate)
+      const now = new Date()
+      const days = now.getTime() - new Date(sDate).getTime()
+      // console.log(days)
+      const day = parseInt(days / (1000 * 60 * 60 * 24 * 365))
+      return day
     }
   },
   created () {
