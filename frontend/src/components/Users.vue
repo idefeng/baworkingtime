@@ -87,6 +87,9 @@
         <el-form-item label="员工姓名:">
           <el-input v-model="editUserForm.username"></el-input>
         </el-form-item>
+        <el-form-item label="岗位名称:">
+          <el-input v-model="editUserForm.job_title"></el-input>
+        </el-form-item>
         <el-form-item label="电子邮件:">
           <el-input v-model="editUserForm.email"></el-input>
         </el-form-item>
@@ -94,8 +97,8 @@
           <el-date-picker v-model="editUserForm.entry_time" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
         </el-form-item>
         <el-form-item style="text-align: right;">
-          <b-button type="submit" @click="onSubmitUpdate">更新信息</b-button>
-          <b-button type="reset" @click="onResetUpdate">重置</b-button>
+          <el-button type="primary" @click="onSubmitUpdate">更新信息</el-button>
+          <el-button type="danger" @click="onResetUpdate">重置</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -109,7 +112,10 @@
           <el-input v-model="addUserForm.username" placeholder="请输入员工姓名">
           </el-input>
         </el-form-item>
-        <br>
+        <el-form-item label="岗位名称:">
+          <el-input v-model="addUserForm.job_title" placeholder="请输入员工姓名">
+          </el-input>
+        </el-form-item>
         <el-form-item label="电子邮件:">
           <el-input v-model="addUserForm.email" placeholder="请输入员工电子邮件">
           </el-input>
