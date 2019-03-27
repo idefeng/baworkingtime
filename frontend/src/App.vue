@@ -1,21 +1,29 @@
 <template>
-  <div id="app" style="margin-top: 0px;margin-right: 10px;">
-    <el-container>
+  <!--<div id="app" style="margin: 0px;">-->
+    <el-container id="app" direction="vertical" style="margin: 0;">
       <!--<el-header>Header</el-header>-->
-      <Header/>
-      <el-row>
-      <Aside/>
-      <el-col :span="20">
-        <router-view/>
-      </el-col>
-      </el-row>
-      <br>
+      <el-header style="width: 100%;padding: 0;">
+        <Header/>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <Aside/>
+        </el-aside>
+        <!--<el-row>-->
+        <el-main>
+          <router-view/>
+        </el-main>
+      </el-container>
+      <!--<el-col :span="20">-->
+
+      <!--</el-col>-->
+      <!--</el-row>-->
       <el-footer>
         <p style="text-align: center">北京博奥网络教育科技股份有限公司 技术部</p>
       </el-footer>
       <!--<img src="./assets/logo.png">-->
     </el-container>
-  </div>
+  <!--</div>-->
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row style="height: 50px; padding-top: 20px;">
+    <el-row>
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>

@@ -1,20 +1,21 @@
 <template>
-    <el-col :span="4">
-      <el-row class="tac">
+    <!--<el-col :span="24">-->
+      <!--<el-row>-->
         <el-menu
             default-active="2"
-            class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
             background-color="#545c64"
             text-color="#fff"
-            active-text-color="#ffd04b">
+            active-text-color="#ffd04b"
+            style="margin: 0; height: 100%;"
+        >
             <el-submenu index="1">
-              <template slot="title">
+              <template slot="title" >
                 <i class="el-icon-location"></i>
                 <span>绩效仪表盘</span>
               </template>
-              <el-menu-item-group>
+              <el-menu-item-group style="right: 0;">
                 <template slot="title">分组一</template>
                 <el-menu-item index="1-1">选项1</el-menu-item>
                 <el-menu-item index="1-2">选项2</el-menu-item>
@@ -31,7 +32,7 @@
               <i class="el-icon-menu"></i>
               <span slot="title"><a href="/Users">用户管理</a></span>
             </el-menu-item>
-            <el-menu-item index="3" disabled>
+            <el-menu-item index="3">
               <i class="el-icon-document"></i>
               <span slot="title"><a href="/Projects">项目管理</a></span>
             </el-menu-item>
@@ -39,13 +40,13 @@
               <i class="el-icon-bell"></i>
               <span slot="title"><a href="/Userscheck">打卡管理</a></span>
             </el-menu-item>
-            <el-menu-item index="4">
+            <el-menu-item index="5">
               <i class="el-icon-date"></i>
               <span slot="title"><a href="/workdiary">日志管理</a></span>
             </el-menu-item>
           </el-menu>
-      </el-row>
-    </el-col>
+      <!--</el-row>-->
+    <!--</el-col>-->
 </template>
 
 <script>
