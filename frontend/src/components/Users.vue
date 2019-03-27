@@ -94,7 +94,7 @@
           <el-input v-model="editUserForm.email"></el-input>
         </el-form-item>
         <el-form-item label="入职时间:">
-          <el-date-picker v-model="editUserForm.entry_time" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+          <el-date-picker v-model="editUserForm.entry_time" type="date" value-format="yyyy-MM-dd"></el-date-picker>
         </el-form-item>
         <el-form-item style="text-align: right;">
           <el-button type="primary" @click="onSubmitUpdate">更新信息</el-button>
@@ -121,9 +121,9 @@
           </el-input>
         </el-form-item>
         <el-form-item label="入职时间:">
-          <el-date-picker type="datetime"
+          <el-date-picker type="date"
                           v-model="addUserForm.entry_time"
-                          value-format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd"
                           placeholder="请输入员工入职日期"
                           >
           </el-date-picker>
