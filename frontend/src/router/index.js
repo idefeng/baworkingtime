@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import DashBoard from '@/components/Dashboard'
 import About from '@/components/About'
 import NotFound from '@/components/NotFound'
 import Users from '@/components/Users'
@@ -17,6 +18,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/Dashboard',
+      name: 'DashBoard',
+      component: DashBoard
     },
     {
       path: '/Users',

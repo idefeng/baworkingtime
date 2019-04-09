@@ -282,13 +282,14 @@ def batch_check_info_upload():
                 if row[2].value in check_info[i]:  # 根据员工卡号去匹配
                     # check_info[i][row[2].value]['name'] = row[1].value
                     # check_info[i][row[2].value]['check'] = row[3].value
+                    # print(row[3].value)
                     work_day = row[3].value.strftime('%Y-%m-%d')   # 上班日期,年-月-日格式
                     if work_day not in check_info[i][row[2].value]:     # 如果该员工卡号下面的字典里,没有该日期,则将该打卡时间加入列表
                         check_info[i][row[2].value][work_day] = [row[3].value.strftime('%Y-%m-%d %H:%M:%S')]
                     else:   # 如果有该日期,则append追加到列表
                         check_info[i][row[2].value][work_day].append(row[3].value.strftime('%Y-%m-%d %H:%M:%S'))
         # print(check_info)
-        # 下面的语句从用户表中列表userid,user_cardnum列
+        # 下面的语句从用户表中列出userid,user_cardnum列
         user_info = Users.query.with_entities(Users.id, Users.user_cardnum).distinct().all()
         # print(user_info)
         for userInfo in user_info:

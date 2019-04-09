@@ -1,69 +1,45 @@
 <template>
-    <div class="container">
+    <div>
       <h1>公司项目管理</h1>
-      <b-row>
-        <b-col md="6" class="my-3">
-          <b-form-group label-cols-sm="3" class="mb-1">
-            <b-input-group prepend="筛查">
-              <b-form-input v-model="filter" placeholder="输入关键字搜索" />
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-row>
-      <b-table
+      <el-row>
+      <el-table
         id="projectsTable"
-        show-empty
-        empty-text="无数据可加载..."
         striped
         hover
-        :filter="filter"
-        @filtered="filterChanged"
-        :fields="fields"
-        :items="items"
-        :per-page="perPage"
-        :current-page="currentPage"
+        :data="items"
       >
-        <template slot="index" slot-scope="data">
-          {{ data.index + 1 }}
-        </template>
-        <template slot="Actions" slot-scope="row">
-          <b-button class="btn-warning" v-b-modal.editProjectInfo @click="editProject(row.item)">编辑</b-button>
-          <b-button class="btn-danger" @click="row.toggleDetails">
-            {{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>
-        </template>
-        <template slot="row-details" slot-scope="row">
-          <b-card>
-            <b-row class="mb-6">
-              <b-col class="text-sm-right"><b>一级项目ID：</b></b-col>
-              <b-col>{{ row.item.id}}</b-col>
-              <b-col class="text-sm-right"><b>一级项目名称：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.TOP_Project_name}}</b-col>
-              <b-col class="text-sm-right"><b>一级项目描述：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.TOP_Project_desc}}</b-col>
-            </b-row>
-            <hr>
-            <b-row class="mb-6">
-              <b-col class="text-sm-right"><b>二级项目ID：</b></b-col>
-              <b-col>{{ row.item.Second_Project_id}}</b-col>
-              <b-col class="text-sm-right"><b>二级项目名称：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.Second_Project_name}}</b-col>
-              <b-col class="text-sm-right"><b>二级项目描述：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.Second_Project_description}}</b-col>
-            </b-row>
-            <hr>
-            <b-button class="btn-danger" @click="deleteProject(2, row.item)">确定删除上述信息?</b-button>
-          </b-card>
-        </template>
-      </b-table>
-      </b-row>
+        <el-table-column type="index"></el-table-column>
+        <el-table-column
+        prop="TOP_Project_name"
+        label="一级项目名称"
+        sortable
+        >
+          <template  slot-scope="data">
+            {{ data.row.TOP_Project_name }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="Second_Project_name" label="二级项目名称">
+            <template  slot-scope="data">
+              {{ data.row.Second_Project_name }}
+            </template>
+          </el-table-column>
+        <el-table-column prop="Second_Project_Description" label="二级项目描述">
+            <template  slot-scope="data">
+              {{ data.row.Second_Project_description }}
+            </template>
+          </el-table-column>
+        <el-table-column label="操作">
+          <template  slot-scope="data">
+            <el-button type="warning"  @click="editProject(data.row)">编辑</el-button>
+            <el-button type="danger" @click="deleteProjectDialogShow = true">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      </el-row>
       <div class="row" style="text-align: center;">
         <div class="col-md-4" style="text-align: left;">
-          <b-button type="button" variant="success" v-b-modal.addProjectInfo @click="getTopProjects(1)">添加项目</b-button>
-          <b-button type="button" variant="primary" v-b-modal.topProjectInfo-modal @click="getTopProjects(2)">管理一级项目</b-button>
+          <el-button type="success" @click="popAddProject">添加项目</el-button>
+          <b-button type="primary" v-b-modal.topProjectInfo-modal @click="getTopProjects(2)">管理一级项目</b-button>
         </div>
         <div class="col-md-4">
           <b-pagination
@@ -76,161 +52,83 @@
         <div class="col-md-4">二级项目总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
       </div>
       <!-- 添加项目信息 -->
-      <b-modal
+      <el-dialog
         id="addProjectInfo"
-        ref="projectInfoRef"
         title="添加新项目信息"
-        ok-title="添加"
-        @ok="onOKAdd"
-        cancel-title="重置"
-        @cancel="onCancelAdd"
+        :visible.sync="addProjectInfoShow"
+        center
+        width="30%"
         >
-        <b-form class="w-100">
-          <b-input-group
-            id="toplevelproject"
-            prepend="请选择一个一级项目"
-            label-for="top_level_project">
-            <b-form-select v-model="selected" :options="project_options" >
-              <template slot="first">
-                <option :value="null" disabled>请选择一个项目</option>
-              </template>
-            </b-form-select>
-            <b-input-group-append>
-              <b-button variant="success" v-b-modal.addTopProject-modal>添加新项目</b-button>
-            </b-input-group-append>
-          </b-input-group>
+        <el-form v-model="projectForm" label-width="20%">
+          <el-form-item label="一级项目">
+            <el-select v-model="selected" label="请选择一个项目" :options="project_options" >
+              <el-option
+                v-for="option in project_options"
+                :key="option.value"
+                :label="option.label"
+                :value="option.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="二级项目名称">
+          <el-input v-model="projectForm.project2_name" placeholder="请输入二级项目名称:" />
+          </el-form-item>
           <br>
-          <b-input-group
-          id="secondlevelprojectname"
-          prepend="请输入二级项目名称"
-          label-for="second_level_project_name">
-          <b-form-input type="text"
-                        id="second_level_project_name"
-                        v-model="projectForm.project2_name"
-                        required
-                        aria-placeholder="请输入二级项目名称:" />
-        </b-input-group>
-          <br>
-        <b-input-group
-          id="secondlevelprojectdesc"
-          prepend="请输入二级项目描述"
-          label-for="second_level_project_desc">
-          <b-form-input type="text"
-                        id="second_level_project_desc"
-                        v-model="projectForm.project2_desc"
-                        required
-                        aria-placeholder="请输入二级项目描述" />
-        </b-input-group>
-        <!--<b-button type="submit" variant="primary">Update</b-button>-->
-        <!--<b-button type="reset" variant="danger">Cancel</b-button>-->
-      </b-form>
-      </b-modal>
-      <!-- 添加一级项目 -->
-      <b-modal
-            id="addTopProject-modal"
-            title="添加一级项目信息"
-            ref="addTopProjectRef"
-            hide-footer
-            >
-            <b-form ref="addtoproject"
-                  id="add_top_project_modal"
-                  @submit="onSubmitAddProject"
-                  @reset="onResetAddProject"
-                  >
-              <b-input-group
-                id="addtopproject"
-                prepend="请输入一级项目名称"
-                label-for="top_level_project_name" >
-                <b-form-input type="text"
-                              id="top_level_project_name"
-                              v-model="topProjectForm.project_name"
-                              required
-                              aria-placeholder="请输入一级项目名称：" />
-              </b-input-group>
-              <br>
-              <b-input-group
-                id="addtopprojectdesc"
-                prepend="请输入一级项目描述"
-                label-for="top_level_project_desc" >
-                <b-form-input type="text"
-                              id="top_level_project_desc"
-                              v-model="topProjectForm.project_desc"
-                              required
-                              aria-placeholder="请输入一级项目描述：" />
-              </b-input-group>
-              <br>
-              <b-button type="submit" variant="primary" >添加项目</b-button>
-              <b-button type="reset" variant="danger" >重置</b-button>
-            </b-form>
-      </b-modal>
+        <el-form-item label="二级项目描述">
+          <el-input type="textarea" rows="2" v-model="projectForm.project2_desc" placeholder="请输入二级项目描述" />
+        </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onOKAdd">添加</el-button>
+            <el-button type="danger" @click="onCancelAdd">取消</el-button>
+          </el-form-item>
+      </el-form>
+      </el-dialog>
       <!-- 更新项目信息 -->
-      <b-modal
+      <el-dialog
         id="editProjectInfo"
-        ref="editProjectInfoRef"
         title="编辑项目信息"
-        hide-footer
+        :visible.sync="editProjectInfoShow"
+        center
+        width="30%"
         >
-        <b-form
-          class="w-100"
-          @submit="onSubmitUpdateProject"
-          @reset="onResetUpdateProject">
-          <b-input-group
-            id="topLevelProject_for_Edit"
-            prepend="选择一个一级项目"
-            label-for="top_level_project">
-            <b-form-select v-model="selected" :options="project_options" >
-            </b-form-select>
-            <b-input-group-append>
-              <b-button variant="success" v-b-modal.addTopProject-modal>添加项目</b-button>
-            </b-input-group-append>
-          </b-input-group>
-          <br>
-          <b-input-group
-          id="secondLevelProject_for_Edit"
-          prepend="编辑二级项目名称"
-          label-for="second_level_project_for_edit">
-          <b-form-input type="text"
-                        id="second_level_project_for_edit"
-                        v-model="editProjectForm.Second_Project_name"
-                        required
-                        aria-placeholder="编辑二级项目名称:" />
-        </b-input-group>
-          <br>
-        <b-input-group
-          id="secondLevelProjectDesc_for_Edit"
-          prepend="编辑二级项目描述"
-          label-for="second_level_project_desc_for_edit">
-          <b-form-input type="text"
-                        id="second_level_project_desc_for_edit"
-                        v-model="editProjectForm.Second_Project_description"
-                        required
-                        aria-placeholder="编辑二级项目描述" />
-        </b-input-group>
-          <br>
-        <b-button type="submit" variant="primary">更新</b-button>
-        <b-button type="reset" variant="danger">重置</b-button>
-      </b-form>
-      </b-modal>
-      <!-- 一级项目信息展示 -->
-      <b-modal
-        id="topProjectInfo-modal"
-        ref="topProjectInfoRef"
-        title="一级项目信息"
-        size="lg"
-        hide-footer>
-        <b-table
-          id="topProjectInfoTable"
-          show-empty
-          empty-text="无数据可加载..."
-          striped
-          hover
-          :fields="topProjectInfoFields"
-          :items="topProjectInfoItems">
-          <template slot="Actions" slot-scope="row">
-            <b-button class="btn-danger" @click="deleteProject(1, row.item)">删除</b-button>
-          </template>
-        </b-table>
-      </b-modal>
+        <el-form :model="editProjectForm" label-width="30%">
+          <el-form-item label="所属一级项目">
+            <el-select v-model="selected" placeholder="请选择">
+              <el-option
+                v-for="option in project_options"
+                :key="option.value"
+                :label="option.label"
+                :value="option.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="二级项目名称">
+          <el-input v-model="editProjectForm.Second_Project_name"/>
+        </el-form-item>
+        <el-form-item label="二级项目描述">
+          <el-input type="textarea" :rows="2" v-model="editProjectForm.Second_Project_description"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmitUpdateProject">更新</el-button>
+          <el-button type="danger" @click="onResetUpdateProject">重置</el-button>
+        </el-form-item>
+      </el-form>
+      </el-dialog>
+      <!-- 删除项目信息确认对话框 -->
+      <el-dialog
+      title="确认删除项目信息?"
+      :visible.sync="deleteProjectDialogShow"
+      width="30%"
+      :model="editProjectForm"
+      center>
+      <span style="text-align: center">确认要删除此项目信息?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteProject(2, editProjectForm)" type="danger">删除</el-button>
+        <el-button @click="''" type="info">取消删除</el-button>
+      </span>
+    </el-dialog>
     </div>
 </template>
 
@@ -241,26 +139,6 @@ export default {
   name: 'Projects',
   data () {
     return {
-      fields: {
-        index: {
-          label: '序号'
-          // variant: 'success'
-        },
-        TOP_Project_name: {
-          label: '一级项目名称',
-          sortable: true
-          // variant: 'success'
-        },
-        Second_Project_name: {
-          label: '二级项目名称'
-        },
-        Second_Project_description: {
-          label: '项目描述'
-        },
-        Actions: {
-          label: '操作'
-        }
-      },
       topProjectInfoFields: {
         TOP_Project_id: {
           label: '序号',
@@ -277,7 +155,9 @@ export default {
           label: '操作'
         }
       },
-      filter: null,
+      addProjectInfoShow: false,
+      editProjectInfoShow: false,
+      deleteProjectDialogShow: false,
       items: [],
       topProjectInfoItems: [],
       totalRows: 0,
@@ -298,25 +178,14 @@ export default {
       editProjectForm: {}
     }
   },
-  computed: {
-    sortOptions () {
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return {text: f.label, value: f.key}
-        })
-    }
-  },
   methods: {
-    filterChanged (filteredItems) {
-      this.totalRows = filteredItems.length
-    },
+    // 获取二级项目信息
     getProjects () {
       const path = 'http://localhost:5000/api/projects/3'
       this.items = []
       axios.get(path)
         .then((res) => {
-          // console.log(res.data.projects)
+          console.log(res.data.projects)
           for (let i = 0; i < res.data.projects.length; i++) {
             this.items.push({'id': res.data.projects[i].id,
               'TOP_Project_name': res.data.projects[i].project_name,
@@ -341,7 +210,7 @@ export default {
           if (typeID === 1) {
             for (let i = 0; i < res.data.projects.length; i++) {
               this.project_options.push({'value': res.data.projects[i].id,
-                'text': res.data.projects[i].project_name})
+                'label': res.data.projects[i].project_name})
             }
             // console.log(this.project_options)
           } else if (typeID === 2) {
@@ -356,6 +225,10 @@ export default {
         .catch((error) => {
           console.error(error)
         })
+    },
+    popAddProject () {
+      this.addProjectInfoShow = true
+      this.getTopProjects(1)
     },
     addProject (typeID, payload) {
       const path = `http://localhost:5000/api/projects/${typeID}`
@@ -379,22 +252,6 @@ export default {
       this.editProjectForm = {}
       this.selected = null
     },
-    onSubmitAddProject (evt) {
-      evt.preventDefault()
-      const payload = {
-        project_name: this.topProjectForm.project_name,
-        project_desc: this.topProjectForm.project_desc
-      }
-      this.addProject('1', payload)
-      this.getTopProjects()
-      this.$refs.addTopProjectRef.hide()
-      this.initForm()
-    },
-    onResetAddProject (evt) {
-      evt.preventDefault()
-      this.$refs.addTopProjectRef.hide()
-      this.initForm()
-    },
     onOKAdd (evt) {
       evt.preventDefault()
       const payload = {
@@ -403,16 +260,19 @@ export default {
         project2_desc: this.projectForm.project2_desc
       }
       this.addProject('2', payload)
-      this.$refs.projectInfoRef.hide()
+      this.addProjectInfoShow = false
       this.initForm()
     },
     onCancelAdd (evt) {
       evt.preventDefault()
-      this.$refs.projectInfoRef.hide()
+      this.addProjectInfoShow = false
       this.initForm()
     },
+    // 编辑项目信息
     editProject (project) {
-      this.getTopProjects()
+      this.getTopProjects(1)
+      this.editProjectInfoShow = true
+      console.log(project)
       this.editProjectForm = project
       this.selected = this.editProjectForm.id
       // console.log(this.editProjectForm)
@@ -430,7 +290,7 @@ export default {
     },
     onSubmitUpdateProject (evt) {
       evt.preventDefault()
-      this.$refs.editProjectInfoRef.hide()
+      this.editProjectInfoShow = false
       const payload = {
         parent_project: this.selected,
         project2_name: this.editProjectForm.Second_Project_name,
@@ -440,7 +300,7 @@ export default {
     },
     onResetUpdateProject (evt) {
       evt.preventDefault()
-      this.$refs.editProjectInfoRef.hide()
+      this.editProjectInfoShow = false
       this.initForm()
       this.getProjects()
     },
@@ -463,7 +323,9 @@ export default {
           }
         })
     },
+    // 删除二级项目
     deleteProject (typeID, project) {
+      console.log(typeID)
       if (typeID === 1) {
         this.removeProject('1', project.TOP_Project_id)
         this.getTopProjects(2)
