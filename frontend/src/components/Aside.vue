@@ -5,10 +5,10 @@
             default-active="2"
             @open="handleOpen"
             @close="handleClose"
-            background-color="#545c64"
+            background-color="#1D1E2E"
             text-color="#fff"
             active-text-color="#ffd04b"
-            style="margin: 0; height: 100%;"
+            style="margin: 0; height: 100%; border-color: #26293C;"
         >
             <el-submenu index="1">
               <template slot="title" >

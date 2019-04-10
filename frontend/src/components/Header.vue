@@ -5,9 +5,10 @@
         class="el-menu-demo"
         mode="horizontal"
         @select="handleSelect"
-        background-color="#545c64"
+        background-color="#1D1E2E"
         text-color="#fff"
-        active-text-color="#ffd04b">
+        active-text-color="#ffd04b"
+        style="border-color: #26293C;">
         <el-menu-item index="1"><img src="../../static/images/logo.png" /> </el-menu-item>
         <el-submenu index="2">
           <template slot="title">我的工作台</template>

@@ -10,7 +10,7 @@
           <Aside/>
         </el-aside>
         <!--<el-row>-->
-        <el-main>
+        <el-main style="background-color: #1D1E2E;">
           <router-view/>
         </el-main>
       </el-container>
