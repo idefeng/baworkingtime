@@ -32,3 +32,21 @@ body {
 .dashboard-list {
   line-height: 30px;
 }
+
+.nav-aside {
+  height: 100%;
+  width: 250px;
+  border-radius: 24px;
+  border-right-color: #1D1E2E;
+  margin-left: 15px;
+  margin-top: 15px;
+}
+
+.nav-aside-menu {
+  border-radius: 24px;
+}
+
+.content {
+  background-color: #1D1E2E;
+  height: 100%;
+}

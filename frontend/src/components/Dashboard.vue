@@ -4,19 +4,19 @@
       <el-col :span="6">
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <el-row><span class="dashboard-first">部门人数（在职）<br>DEPARTMENT</span></el-row>
-          <el-row><span class="dashboard-number">37</span></el-row>
+          <el-row><span class="dashboard-number">37</span><i class="el-icon-upload2" style="color: greenyellow;"></i></el-row>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <el-row><span class="dashboard-first">项目数量（活跃）<br>PROJECTS</span></el-row>
-          <el-row><span class="dashboard-number">20</span></el-row>
+          <el-row><span class="dashboard-number">20</span><i class="el-icon-download" style="color: red;"></i></el-row>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <el-row><span class="dashboard-first">平均加班（上月）<br>WORKTIME</span></el-row>
-          <el-row><span class="dashboard-number">57</span> <span style="color: #ffffff;"> Hours</span></el-row>
+          <el-row><span class="dashboard-number">57</span><i class="el-icon-upload2"></i> <span style="color: #ffffff;"> Hours</span></el-row>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -38,7 +38,7 @@
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <div slot="header">
             <span class="dashboard-header">绩效排行榜</span>
-            <div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>
+            <!--<div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>-->
           </div>
           <div>
             <el-row class="dashboard-list">
@@ -73,7 +73,7 @@
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <div slot="header">
             <span class="dashboard-header">加班排行榜</span>
-            <div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>
+            <!--<div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>-->
           </div>
           <div>
             <el-row class="dashboard-list">
@@ -108,7 +108,7 @@
         <el-card style="background-color: #26293C; border-color: #26293C;">
           <div slot="header">
             <span class="dashboard-header">参与项目排行榜</span>
-            <div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>
+            <!--<div style="margin-bottom: 3px;"><el-button style="float: right; padding: 3px 0;" type="text">查看更多</el-button></div>-->
           </div>
           <div>
             <el-row class="dashboard-list">
