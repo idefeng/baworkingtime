@@ -259,7 +259,7 @@ def batch_check_info_upload():
 
         f.save(os.path.join(file_dir, new_filename))
         excel_file = load_workbook(file_dir + '/' + new_filename)
-        sheet = excel_file.get_sheet_by_name('北京')  # 打开名叫”“”“”“”“”“”“”“北京的sheet
+        sheet = excel_file.get_sheet_by_name('北京')  # 打开名叫北京的sheet
         # print(sheet["C4"].value)
         # print(sheet.rows)
         # print(sheet)

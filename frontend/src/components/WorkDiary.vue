@@ -1,79 +1,30 @@
 <template>
     <b-container>
-      <h1>工作日志管理</h1>
       <b-row>
-        <b-col md="6" class="my-3">
-          <b-form-group label-cols-sm="3" class="mb-1">
-            <b-input-group prepend="查找">
-              <b-form-input v-model="filter" placeholder="输入关键字搜索" />
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">清除条件</b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-row>
-      <b-table
+      <el-table
         id="workDiaryTable"
-        show-empty
-        empty-text="无数据可加载..."
-        striped
-        hover
-        :filter="filter"
-        @filtered="filterChanged"
-        :fields="fields"
-        :items="items"
-        :per-page="perPage"
-        :current-page="currentPage"
+        :data="items"
+        :stripe="true"
       >
-        <template slot="index" slot-scope="data">
-          {{ data.index + 1 }}
-        </template>
-        <template slot="actions" slot-scope="row">
-          <b-button class="btn-warning" v-b-modal.editDiaryInfo-Modal @click="editDiaryInfo(row.item)">编辑</b-button>
-          <b-button class="btn-danger" @click="row.toggleDetails">
-            {{ row.detailsShowing ? '取消删除' : '删除'}}</b-button>
-        </template>
-        <template slot="row-details" slot-scope="row">
-          <b-card>
-            <b-row class="mb-6">
-              <b-col class="text-sm-right"><b>日志ID：</b></b-col>
-              <b-col>{{ row.item.id}}</b-col>
-              <b-col class="text-sm-right"><b>用户名称：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.username}}</b-col>
-              <b-col class="text-sm-right"><b>工作日期：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.work_date}}</b-col>
-            </b-row>
-            <hr>
-            <b-row class="mb-6">
-              <b-col class="text-sm-right"><b>工作时长：</b></b-col>
-              <b-col>{{ row.item.work_hours}}</b-col>
-              <b-col class="text-sm-right"><b>工作项目：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.project_name}}</b-col>
-              <b-col class="text-sm-right"><b>工作内容：</b></b-col>
-              <b-col class="text-sm-left">{{ row.item.work_content}}</b-col>
-            </b-row>
-            <hr>
-            <b-button class="btn-danger" @click="deleteDiaryInfo(row.item)">确定删除该条日志信息?</b-button>
-          </b-card>
-        </template>
-      </b-table>
+        <el-table-column prop="id" label="序号"></el-table-column>
+        <el-table-column prop="username" label="用户名"></el-table-column>
+        <el-table-column prop="work_date" label="日期"></el-table-column>
+        <el-table-column prop="work_hours" label="工作时长"></el-table-column>
+        <el-table-column prop="project_name" label="涉及项目"></el-table-column>
+        <el-table-column prop="work_content" label="工作内容"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="success" size="mini" @click="editDiaryInfo(scope.row)">编辑</el-button>
+            <el-button type="danger" size="mini" @click="deleteDiaryInfo(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       </b-row>
       <div class="row" style="text-align: center;">
         <div class="col-md-4" style="text-align: left;">
-          <b-button variant="success" v-b-modal.addDiayInfo-Modal @click="getBasicInfo" >单条添加</b-button>
-          <b-button variant="primary" sr-only>批量导入</b-button>
+          <el-button variant="success" @click="getBasicInfo" >单条添加</el-button>
+          <el-button variant="primary" sr-only>批量导入</el-button>
         </div>
-        <div class="col-md-4">
-          <b-pagination
-            :total-rows="totalRows"
-            :per-page="perPage"
-            v-model="currentPage"
-            aria-controls="projectsTable"
-            ></b-pagination>
-        </div>
-        <div class="col-md-4">部门工作日志记录总数:&nbsp;<b>{{ totalRows }}</b>,&nbsp;当前第{{ currentPage }}页&nbsp;</div>
       </div>
       <!-- 添加日志记录信息 -->
       <b-modal id="addDiayInfo-Modal" ref="addDiaryInfoRef" title="添加日志信息" class="text-left" hide-footer>
@@ -108,33 +59,36 @@
       </b-form>
       </b-modal>
       <!-- 编辑日志记录 -->
-      <b-modal id="editDiaryInfo-Modal" ref="editUserCheckInfoRef" title="编辑日志信息" class="text-left" hide-footer>
-        <b-form @submit="onSubmitEdit" @reset="onResetEdit">
-          <label>用户名: {{ editDiaryInfoForm.username}}</label>
-          <b-form-group >
-            <b-input-group prepend="工作日期">
-              <b-input v-model="editDiaryInfoForm.work_date"></b-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group >
-            <b-input-group prepend="工作时长">
-              <b-input v-model="editDiaryInfoForm.work_hours"></b-input>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group label="工作项目：" label-for="username-select">
-            <b-form-select id="project1-select" v-model="project_selected" :options="project_options" required >
-              <option :value="editDiaryInfoForm.project_id" slot="first">{{ editDiaryInfoForm.project_name}}</option>
-            </b-form-select>
-        </b-form-group>
-          <b-form-group>
-            <b-input-group prepend="工作内容">
-              <b-input v-model="editDiaryInfoForm.work_content"></b-input>
-            </b-input-group>
-          </b-form-group>
-          <b-button variant="success" type="submit">确认</b-button>
-          <b-button variant="danger" type="reset">重置</b-button>
-        </b-form>
-      </b-modal>
+      <el-dialog id="editDiaryInfo-Modal" ref="editUserCheckInfoRef" title="编辑日志信息" center width="30%" :visible.sync="diaryUpdateDialogShow">
+        <el-form :model="editDiaryInfoForm" @submit="onSubmitEdit" @reset="onResetEdit" label-width="20%">
+          <el-form-item label="用户名">
+            <el-input v-model="editDiaryInfoForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="工作日期">
+              <el-input v-model="editDiaryInfoForm.work_date"></el-input>
+          </el-form-item>
+          <el-form-item label="工作时长" >
+              <el-input v-model="editDiaryInfoForm.work_hours"></el-input>
+          </el-form-item>
+          <el-form-item label="涉及项目" >
+            <el-select id="project1-select" v-model="editDiaryInfoForm.project_name" required >
+              <el-option
+                v-for="item in project_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+        </el-form-item>
+          <el-form-item label="工作内容">
+              <el-input type="textarea" :rows="4" v-model="editDiaryInfoForm.work_content"></el-input>
+          </el-form-item>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click=" diaryUpdateDialogShow = false ">取消</el-button>
+            <el-button type="primary" @click="onSubmitEdit">确定</el-button>
+          </span>
+        </el-form>
+      </el-dialog>
       <!-- 批量导入工作日志 -->
     </b-container>
 </template>
@@ -146,42 +100,15 @@ export default {
   name: 'WorkDiary',
   data () {
     return {
-      totalRows: 0,
-      perPage: 10,
-      currentPage: 1,
-      filter: null,
-      fields: {
-        'index': {
-          label: '序号'
-        },
-        'username': {
-          label: '姓名'
-        },
-        'work_date': {
-          label: '工作日期'
-        },
-        'work_hours': {
-          label: '工作时长',
-          sortable: true
-        },
-        'project_name': {
-          label: '工作项目'
-        },
-        'work_content': {
-          label: '工作内容'
-        },
-        'actions': {
-          label: '操作'
-        }
-      },
       items: [],
+      diaryUpdateDialogShow: false,
       username_options: [],
       project_options: [],
       username_selected: null,
       project_selected: null,
       workDiaryForm: {
         'user_id': '',
-        'user_name': '',
+        'username': '',
         'work_date': '',
         'work_hours': 0,
         'project_id': '',
@@ -192,18 +119,16 @@ export default {
     }
   },
   methods: {
-    initDate () {
+    initData () {
       this.workDiaryForm.user_id = ''
-      this.workDiaryForm.user_name = ''
+      this.workDiaryForm.username = ''
       this.workDiaryForm.work_date = ''
       this.workDiaryForm.project_name = ''
       this.workDiaryForm.project_id = ''
       this.workDiaryForm.work_hours = ''
       this.workDiaryForm.work_content = ''
       this.editDiaryInfoForm = {}
-    },
-    filterChanged (filteredItems) {
-      this.totalRows = filteredItems.length
+      this.project_options = {}
     },
     getWorkDiary () {
       const path = 'http://localhost:5000/api/workdiary'
@@ -237,11 +162,12 @@ export default {
       const path = 'http://localhost:5000/api/projects/2'
       axios.get(path)
         .then((res) => {
+          this.project_options = ''
           // console.log(res.data.projects)
           for (let i = 0; i < res.data.projects.length; i++) {
             this.project_options.push({
               'value': res.data.projects[i].id,
-              'text': res.data.projects[i].project_name
+              'label': res.data.projects[i].project_name
             })
           }
         })
@@ -265,7 +191,6 @@ export default {
       this.getProjects()
     },
     onSubmit (evt) {
-      // console.log('onsubmit')
       evt.preventDefault()
       const payload = {
         'user_id': this.username_selected,
@@ -303,7 +228,10 @@ export default {
     // 编辑单条日志
     editDiaryInfo (item) {
       this.getProjects()
+      console.log(this.project_options)
+      this.diaryUpdateDialogShow = true
       this.editDiaryInfoForm = item
+      // console.log(item)
     },
     updateDiary (diaryId, payload) {
       const path = `http://localhost:5000/api/workdiary/${diaryId}`

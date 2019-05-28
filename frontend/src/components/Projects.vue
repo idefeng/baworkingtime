@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>公司项目管理</h1>
+<!--      <h1>公司项目管理</h1>-->
       <el-row>
       <el-table
         id="projectsTable"
@@ -10,6 +10,7 @@
       >
         <el-table-column type="index"></el-table-column>
         <el-table-column
+          fixted
         prop="TOP_Project_name"
         label="一级项目名称"
         sortable

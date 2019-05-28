@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 100%;">
-    <el-row>
+<!--  <div style="height: 100%;">-->
+<!--    <el-row>-->
       <el-menu
         :default-active="activeIndex"
         class="el-menu-demo"
@@ -10,9 +10,18 @@
         text-color="#fff"
         active-text-color="#ffd04b"
         style="border-color: #26293C;">
-        <el-menu-item index="1"><span STYLE="font-weight: bolder;font-size: 20px;">ETLCHINA R&D DEPARTMENT</span> </el-menu-item>
-        <el-menu-item index="2" style="float:right;"><span class="el-icon-setting"></span></el-menu-item>
-        <el-menu-item index="3" style="float:right;">
+        <el-menu-item index="1"><span STYLE="font-weight: bolder;font-size: 20px;"><a href="/Dashboard">ETLCHINA R&D DEPARTMENT</a></span> </el-menu-item>
+        <el-submenu index="2">
+          <template slot="title"><i class="el-icon-location"></i>工作台</template>
+          <el-menu-item index="2-1"><a href="/Users"><i class="el-icon-menu"></i>部门用户管理</a></el-menu-item>
+          <el-menu-item index="2-2"><a href="/Projects"><i class="el-icon-document"></i>部门项目管理</a> </el-menu-item>
+          <el-menu-item index="2-3"><a href="/Userscheck"><i class="el-icon-bell"></i>部门考勤管理</a> </el-menu-item>
+          <el-menu-item index="2-4"><a href="/WorkDiary"><i class="el-icon-date"></i>部门日志管理</a> </el-menu-item>
+          <hr>
+          <el-menu-item index="2-5"><a href="/Dashboard"><i class="el-icon-menu"></i>返回首页</a> </el-menu-item>
+        </el-submenu>
+        <el-menu-item index="3" style="float:right;"><span class="el-icon-setting"></span></el-menu-item>
+        <el-menu-item index="4" style="float:right;">
           <a href="#">
             <span class="el-icon-message">
               <el-badge is-dot style="margin-top: 0px;"></el-badge>
@@ -23,8 +32,8 @@
           <b-img src="xxx.jpg" rounded="circle" alt="xxx"></b-img>
         </a></el-menu-item>
       </el-menu>
-    </el-row>
-    </div>
+<!--    </el-row>-->
+<!--    </div>-->
 </template>
 
 <script>

@@ -11,7 +11,7 @@
   <el-table
       id="UsersTable"
       :data="items.slice((currentPage-1)*pageSize, currentPage*pageSize)"
-      style="margin: 5px 5px;"
+      style="margin: 5px 5px; background-color: #1D1E2E;"
       stripe
       border
       :default-sort="{prop: 'user_cardnum', order: 'ascending'}"
@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template  slot-scope="data">
+        <template slot-scope="data">
           <el-button type="warning" @click="editUser(data.row)">编辑</el-button>
           <el-button type="danger" @click="popDeleteUserDialog(data.row)">删除</el-button>
         </template>
